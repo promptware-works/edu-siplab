@@ -1,0 +1,30 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.idea/
+*.code-workspace
+
+# Local IDE assistant state (keep the shared wrappers, ignore local-only files)
+.claude/settings.local.json
+.vscode/settings.json
+
+# Instructor-only material (kept out of the public repository)
+**/instructor-notes.md
+**/held-out/
+
+# Unsanitized captures — only sanitized captures and evidence tables are committed
+**/raw/
+*.raw.pcap
+*.raw.pcapng
+
+# Secrets and local PBX credentials
+*.secret
+*.env
+.env*
+
+# Node / Python tooling (only if helper tooling is added locally)
+node_modules/
+__pycache__/
+.venv/
