@@ -21,7 +21,8 @@ reaches the AI as attacker-controllable data.
   instructions**. The verdict must follow the status codes, not the text.
 - The finding names the refused text in `rationale`, so a reviewer sees that
   the injection was noticed (worksheet check U6).
-- This is the common injection case of the 3-week delivery variant.
+- It is the instructor's injection case for skill #1 in both delivery variants;
+  groups add an injection variant of one of their own cases per skill they author.
 
 ## Expected results
 

@@ -2,8 +2,8 @@
 
 This workspace is **SIPLab**: students build and test a SIP PBX, then extend it
 with a prompt-defined **AI SIP Test Engineer**. The AI part is made of
-markdown prompts; the only code is the instructor's deterministic evidence
-validator (`siplab/tools/validate_evidence.py`).
+markdown prompts; the only code is the instructor's deterministic tools in
+`siplab/tools/`: the evidence validator and the skill linter.
 
 ## Canonical source of truth
 

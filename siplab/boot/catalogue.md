@@ -42,6 +42,8 @@ and which file the operator pastes when it is dispatched.
 ## Catalogue conventions
 
 - `#` is the dispatch identifier: `dispatch <N>` forces skill #N.
+- A skill's **id** is the folder name of its prompt file (e.g. `02-call-flow`);
+  `plan`, findings, and gaps use it.
 - The orchestrator selects skills by focus tag only (orchestrator *Routing & Method*).
 - `placeholder` skills are planned and dispatched like any other; their fixed
   reply becomes a coverage gap, so a test that needs them can never report `pass`.
@@ -53,6 +55,6 @@ and which file the operator pastes when it is dispatched.
 
 ---
 
-End of catalogue. Now count the rows of the table as N and reply exactly:
-
-> `Catalogue registered, N skills available — ready for test case.`
+End of catalogue. Now count the rows of the table as N, give the readiness
+line for this step, and stop (orchestrator:
+`Catalogue registered, N skills available — ready for test case.`).

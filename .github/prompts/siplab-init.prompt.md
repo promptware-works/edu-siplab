@@ -1,5 +1,5 @@
 ---
-mode: ask
+agent: ask
 description: Start the SIPLab AI SIP Test Engineer — orchestrator, boot payload, catalogue
 ---
 

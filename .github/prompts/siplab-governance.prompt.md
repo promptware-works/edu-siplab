@@ -1,5 +1,6 @@
 ---
-mode: ask
+agent: agent
+tools: ['search/codebase']
 description: Review a SIPLab skill before submission with the advisory skill reviewer (paste the lint output if you have it)
 ---
 

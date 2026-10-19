@@ -51,12 +51,13 @@ Then:
 - **Work only in** `deliverables/`, the skills you implement under
   `siplab/skills/`, and their status in `siplab/boot/catalogue.md`. Everything
   else belongs to the instructor.
-- **Submit** by pushing a tag per milestone: `git tag ms01 && git push origin ms01`.
+- **Submit** by pushing a tag per milestone: `git tag ms01 && git push origin ms01`
+  (3-week variant: `cp1`, `cp2`, `final`).
 - **Get instructor updates** with `git pull upstream main`.
 - **No repository access possible?** Send a bundle instead:
   `git bundle create siplab-<group-name>-ms01.bundle --all`.
 
-Details: [proposal § 3.8](docs/project-proposal/proposal.md#38-team-repositories)
+Details: [proposal § 3.8](docs/project-proposal/proposal.md#38-group-repositories)
 and the submission workflow in [`delivery-plan.md`](docs/project-proposal/delivery-plan.md).
 
 ---
@@ -104,7 +105,10 @@ approve the plan; paste each skill when it is dispatched. Paste only the
 
 ### Claude Code (convenience wrappers)
 
-| Command | Effect |
+Five project skills under [`.claude/skills/`](.claude/skills/), invoked by
+name or picked up by intent:
+
+| Skill | Effect |
 | --- | --- |
 | `/siplab-init` | Load orchestrator, boot payload, and catalogue in one step. |
 | `/siplab-catalogue` | Re-register the catalogue, e.g. after a status change. |
@@ -112,17 +116,14 @@ approve the plan; paste each skill when it is dispatched. Paste only the
 | `/siplab-test <scenario or corpus test>` | Build the test message (never includes a truth file). |
 | `/siplab-governance <SKILL.md>` | Review a skill before submission: linter, then the skill reviewer. |
 
-`siplab-init`, `siplab-catalogue`, and `siplab-governance` are also auto-discovered skills under
-[`.claude/skills/`](.claude/skills/).
-
 ### GitHub Copilot Chat (convenience wrappers)
 
 - [`.github/copilot-instructions.md`](.github/copilot-instructions.md) — workspace rules.
 - [`.github/prompts/`](.github/prompts/) — `siplab-init`, `siplab-catalogue`,
-  `siplab-skill`, `siplab-test`, `siplab-governance` prompt files (enable `chat.promptFiles` in VS Code).
-- [`.github/agents/siplab-orchestrator.agent.md`](.github/agents/siplab-orchestrator.agent.md)
-  and a chat mode under [`.github/chatmodes/`](.github/chatmodes/);
-  [`.github/agents/siplab-governance.agent.md`](.github/agents/siplab-governance.agent.md) for the skill reviewer.
+  `siplab-skill`, `siplab-test`, `siplab-governance` prompt files.
+- Custom agents: [`.github/agents/siplab-orchestrator.agent.md`](.github/agents/siplab-orchestrator.agent.md)
+  for the orchestrator and [`.github/agents/siplab-governance.agent.md`](.github/agents/siplab-governance.agent.md)
+  for the skill reviewer.
 
 > Wrappers are convenience, not requirements. If a wrapper ever disagrees with
 > the file it loads, the file under `siplab/` wins.
@@ -156,7 +157,7 @@ siplab/                                   # What you use and extend — canonica
 
 deliverables/                             # What you hand in — empty templates, filled in each group's copy
 
-.claude/commands/, .claude/skills/        # Claude Code wrappers
+.claude/skills/                           # Claude Code wrappers
 .github/                                  # Copilot wrappers and workspace instructions
 ```
 

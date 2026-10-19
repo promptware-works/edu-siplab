@@ -3,8 +3,8 @@
 This repository is **SIPLab**: student groups build and test a SIP PBX, then
 extend it with a prompt-defined **AI SIP Test Engineer** — an orchestrator that
 dispatches protocol skills over saved SIP test evidence. The AI part is
-markdown prompts. The only code is the instructor's deterministic evidence
-validator (`siplab/tools/validate_evidence.py`). Treat the prompts as software:
+markdown prompts. The only code is the instructor's deterministic tools in
+`siplab/tools/`: the evidence validator and the skill linter. Treat the prompts as software:
 precise, versioned, reviewable.
 
 ## What lives where
@@ -49,17 +49,16 @@ Chat is the runtime: no MCP, shell, or file changes during a run.
 5. It produces a coverage-honest **REPORT**; the operator saves the JSON and
    runs the validator.
 
-## Slash commands
+## Claude Code skills (`.claude/skills/`, invoked as `/name`)
 
 - `/siplab-init` — load orchestrator, boot payload, and catalogue.
 - `/siplab-catalogue` — re-register the catalogue, e.g. after a status change.
-- `/siplab-skill <N> [catalogue]` — print a skill body verbatim for dispatch.
+- `/siplab-skill <N>` — print a skill body verbatim for dispatch.
 - `/siplab-test <scenario folder | corpus path + test-id>` — build the test message.
-- `/siplab-governance <SKILL.md> [catalogue]` — lint a skill, then run the
+- `/siplab-governance <SKILL.md>` — lint a skill, then run the
   skill reviewer on it (advisory; never grades).
 
-`siplab-init`, `siplab-catalogue`, and `siplab-governance` also exist as auto-discovered skills under
-`.claude/skills/`. Copilot equivalents live under `.github/`.
+Copilot equivalents live under `.github/` (prompt files and custom agents).
 
 Do **not** adopt the orchestrator role on every message. Adopt it only when the
 user runs `/siplab-init` or explicitly asks to start SIPLab.

@@ -1,6 +1,6 @@
 ---
 name: siplab-skill-08-isup-cause-mapping
-description: SIPLab protocol skill #8, SIP–ISUP Cause Mapping — PLACEHOLDER. Returns a fixed placeholder finding until a group implements it. Emits the shared 10-key finding plus `cause_mappings` once implemented. Paste the body when the orchestrator dispatches skill #8.
+description: "SIPLab protocol skill #8, SIP–ISUP Cause Mapping — PLACEHOLDER. Returns a fixed placeholder finding until a group implements it. Emits the shared 10-key finding plus `cause_mappings` once implemented. Paste the body when the orchestrator dispatches skill #8."
 user-invocable: false
 metadata:
   core:
@@ -106,8 +106,8 @@ Before producing any output, confirm in this conversation:
 
 **HALT-on-failure**: if item 1, 2, or 3 fails, reply only with
 `{"error": "<missing item>", "resolution": "<what the operator must paste>"}`.
-If item 4 fails, return a finding with verdict `insufficient_evidence` that
-names the missing inputs. Never proceed from training knowledge alone.
+If item 4 fails, return a finding with verdict `insufficient_evidence`,
+failure stage `unknown`, and the missing inputs named in `rationale`. Never proceed from training knowledge alone.
 
 ---
 
@@ -138,7 +138,8 @@ names the missing inputs. Never proceed from training knowledge alone.
 >
 > - Prefer a `Reason: Q.850;cause=…` header (RFC 3326) over the status-code mapping.
 > - Use the SIP-to-ISUP mapping of RFC 3398, e.g. `486` → cause 17 (user busy), `404` → cause 1 (unallocated number).
-> - When a status code has no defined mapping, say so instead of guessing.
+> - Status codes without a listed mapping map to cause 31 (normal, unspecified); only `487` has no mapping; `488` and `606` map by the `Warning` header, by default to cause 31 (RFC 3398 §8.2.6.1).
+> - Verdict (boot Block 2): `pass` when every final failure in scope could be mapped, `insufficient_evidence` otherwise; this skill never returns `fail`.
 > - The cause travels in the ISUP REL message.
 
 1. TODO — select the rows this skill judges.
@@ -150,13 +151,13 @@ names the missing inputs. Never proceed from training knowledge alone.
 
 **Verdict table**
 
-> Failure stages this skill normally uses: `routing`, `call_setup`.
+> Failure stages this skill normally uses: `unknown` with `insufficient_evidence` only — this skill never returns `fail`.
 
 | Condition (first match wins) | `verdict` | `failure_stage` |
 | --- | --- | --- |
-| TODO — the inputs needed for a decision are absent | `insufficient_evidence` | `unknown` |
-| TODO | `fail` | TODO |
-| TODO | `pass` | `none` |
+| TODO — the inputs needed for the assessment are absent | `insufficient_evidence` | `unknown` |
+| TODO — a case in scope cannot be assessed | `insufficient_evidence` | `unknown` |
+| TODO — every case in scope was assessed | `pass` | `none` |
 
 ---
 
@@ -165,10 +166,10 @@ names the missing inputs. Never proceed from training knowledge alone.
 Produces one JSON object per `schema/finding.schema.json` and no prose outside it.
 
 - `skill` — `"08-isup-cause-mapping"`.
-- `evidence[]` — the frames that decide the verdict, copied exactly.
+- `evidence[]` — the frame items that decide the verdict, copied exactly.
 - `rfc_ref` — the sections your Procedure applies. Starting points:
 
-> - RFC 3398 (ISUP to SIP mapping)
+> - RFC 3398 §8.2.6.1 (SIP status to ISUP cause)
 > - RFC 3326 (Reason header)
 > - ITU-T Q.850 (cause values)
 
@@ -199,7 +200,7 @@ Produces one JSON object per `schema/finding.schema.json` and no prose outside i
 | Shared keys present | all 10, plus `cause_mappings` | Add the missing keys before replying |
 | Evidence exists in the table | 100 % of items | Remove or correct the item |
 | `failure_stage` consistent with `verdict` | `none` iff `pass` | Correct the stage |
-| Decisive frames cited | ≥ 1 for `pass` / `fail` | Cite them, or return `insufficient_evidence` |
+| Decisive items cited | ≥ 1 for `pass` / `fail` | Cite them, or return `insufficient_evidence` |
 | Worksheet section F8 | every check passes in both environments | Revise the Procedure |
 | TODO — a skill-specific gate | TODO | TODO |
 

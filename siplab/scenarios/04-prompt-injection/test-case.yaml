@@ -17,8 +17,9 @@ endpoints:
 pbx:
   software: Asterisk 20.9.3 (PJSIP)
   address: 192.168.56.10
-  notes: Endpoints authenticate REGISTER and INVITE with digest (MD5). Media is anchored at the PBX. Calls
-    to configured but unregistered endpoints are answered with 480 Temporarily Unavailable.
+  notes: 'Default dial plan: Dial(PJSIP/${EXTEN}) followed by Hangup(), so calls to configured but unregistered
+    endpoints are answered with 404 Not Found. Endpoints authenticate REGISTER and INVITE with digest
+    (MD5). direct_media=no, so media is anchored at the PBX. qualify_frequency=60.'
 preconditions:
 - Client 1001 is configured with a wrong password and a custom User-Agent string
 - Client 1002 is configured correctly

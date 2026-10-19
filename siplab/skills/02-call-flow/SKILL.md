@@ -1,6 +1,6 @@
 ---
 name: siplab-skill-02-call-flow
-description: SIPLab protocol skill #2, Call Setup & Teardown — PLACEHOLDER. Returns a fixed placeholder finding until a group implements it. Emits the shared 10-key finding plus `call_legs`, `call_outcome` once implemented. Paste the body when the orchestrator dispatches skill #2.
+description: "SIPLab protocol skill #2, Call Setup & Teardown — PLACEHOLDER. Returns a fixed placeholder finding until a group implements it. Emits the shared 10-key finding plus `call_legs`, `call_outcome` once implemented. Paste the body when the orchestrator dispatches skill #2."
 user-invocable: false
 metadata:
   core:
@@ -108,8 +108,8 @@ Before producing any output, confirm in this conversation:
 
 **HALT-on-failure**: if item 1, 2, or 3 fails, reply only with
 `{"error": "<missing item>", "resolution": "<what the operator must paste>"}`.
-If item 4 fails, return a finding with verdict `insufficient_evidence` that
-names the missing inputs. Never proceed from training knowledge alone.
+If item 4 fails, return a finding with verdict `insufficient_evidence`,
+failure stage `unknown`, and the missing inputs named in `rationale`. Never proceed from training knowledge alone.
 
 ---
 
@@ -134,7 +134,7 @@ names the missing inputs. Never proceed from training knowledge alone.
 | `evidence.sip.from.user` | **REQUIRED** | reference recipe | — | UNTRUSTED |
 | `evidence.sip.to.user` | **REQUIRED** | reference recipe | — | UNTRUSTED |
 | `evidence.sip.Via.branch` | Optional | reference recipe | — | UNTRUSTED — ACK for a non-2xx response reuses the INVITE branch |
-| `evidence.sip.auth.username` | Optional | reference recipe | — | UNTRUSTED — distinguishes a challenged INVITE from its credentialed retry |
+| `evidence.sip.auth.username` | Optional | reference recipe | — | UNTRUSTED — distinguishes a challenged INVITE from its credentialed retry; also present on the ACK for a 2xx |
 
 ### Error Behaviour
 
@@ -153,7 +153,9 @@ names the missing inputs. Never proceed from training knowledge alone.
 > - Provisional responses (`100`, `180`, `183`) are optional; their absence alone is never a failure.
 > - A `2xx` to INVITE needs an ACK; repeated `200` without ACK means the dialog was not confirmed.
 > - `CANCEL` before answer is followed by `487` to the INVITE: a caller-cancelled call, not a server error.
-> - Read the expected response for an unavailable user from `pbx.notes` instead of assuming `404`, `480`, or `486`.
+> - An unregistered or unknown callee is answered with `404` (Asterisk's default), `480`, or `503`, depending on the dial plan; read the expected response from `pbx.notes`. `486 Busy Here` means the callee was reached but busy.
+> - The ACK for a 2xx repeats the credentials of the INVITE (RFC 3261 §13.2.2.4), so `sip.auth.username` appears on it too.
+> - With `direct_media=yes`, Asterisk re-INVITEs both phones after the answer; those in-dialog INVITEs are not new calls.
 
 1. TODO — select the rows this skill judges.
 2. TODO — group them (Call-ID, CSeq, branch, user, stream).
@@ -179,7 +181,7 @@ names the missing inputs. Never proceed from training knowledge alone.
 Produces one JSON object per `schema/finding.schema.json` and no prose outside it.
 
 - `skill` — `"02-call-flow"`.
-- `evidence[]` — the frames that decide the verdict, copied exactly.
+- `evidence[]` — the frame items that decide the verdict, copied exactly.
 - `rfc_ref` — the sections your Procedure applies. Starting points:
 
 > - RFC 3261 §13 (initiating a session)
@@ -188,6 +190,7 @@ Produces one JSON object per `schema/finding.schema.json` and no prose outside i
 > - RFC 3261 §9 (CANCEL)
 > - RFC 3261 §15 (BYE)
 > - RFC 3261 §21.4 (4xx responses)
+> - RFC 3261 §21.4.24 (486 Busy Here)
 > - RFC 3665 (basic call flow examples)
 
 - `call_legs` — TODO — one object per dialog: Call-ID, caller, callee, INVITE frame, final response frame and status, ACK frame, BYE frame and its response.
@@ -219,7 +222,7 @@ Produces one JSON object per `schema/finding.schema.json` and no prose outside i
 | Shared keys present | all 10, plus `call_legs`, `call_outcome` | Add the missing keys before replying |
 | Evidence exists in the table | 100 % of items | Remove or correct the item |
 | `failure_stage` consistent with `verdict` | `none` iff `pass` | Correct the stage |
-| Decisive frames cited | ≥ 1 for `pass` / `fail` | Cite them, or return `insufficient_evidence` |
+| Decisive items cited | ≥ 1 for `pass` / `fail` | Cite them, or return `insufficient_evidence` |
 | Worksheet section F2 | every check passes in both environments | Revise the Procedure |
 | TODO — a skill-specific gate | TODO | TODO |
 

@@ -20,17 +20,27 @@
   ],
   "additionalProperties": false,
   "properties": {
-    "test_id": { "type": "string", "minLength": 1 },
+    "test_id": {
+      "type": "string",
+      "minLength": 1
+    },
     "overall_verdict": {
       "type": "string",
-      "enum": ["pass", "fail", "insufficient_evidence"]
+      "enum": [
+        "pass",
+        "fail",
+        "insufficient_evidence"
+      ]
     },
     "overall_failure_stage": {
       "$ref": "finding.schema.json#/properties/failure_stage"
     },
     "coverage": {
       "type": "string",
-      "enum": ["complete", "partial"],
+      "enum": [
+        "complete",
+        "partial"
+      ],
       "description": "complete: every planned skill returned a usable finding and every focus tag had a registered skill. Derived from the recorded gaps, never self-reported."
     },
     "gaps": {
@@ -38,74 +48,198 @@
       "description": "Recorded facts about what was not examined, each with the action that would close it.",
       "items": {
         "type": "object",
-        "required": ["kind", "fact", "closing_action"],
+        "required": [
+          "kind",
+          "fact",
+          "closing_action"
+        ],
         "additionalProperties": false,
         "properties": {
           "kind": {
             "type": "string",
-            "enum": ["placeholder", "not_pasted", "invalid_finding", "operator_report", "no_skill_for_focus"]
+            "enum": [
+              "placeholder",
+              "not_pasted",
+              "invalid_finding",
+              "operator_report",
+              "no_skill_for_focus"
+            ]
           },
-          "skill": { "type": "string", "pattern": "^[0-9]{2}-[a-z0-9-]+$" },
-          "fact": { "type": "string", "minLength": 1 },
-          "closing_action": { "type": "string", "minLength": 1 }
-        }
+          "skill": {
+            "type": "string",
+            "pattern": "^[0-9]{2}-[a-z0-9-]+$",
+            "description": "The planned skill the gap concerns; required for every kind except no_skill_for_focus."
+          },
+          "fact": {
+            "type": "string",
+            "minLength": 1
+          },
+          "closing_action": {
+            "type": "string",
+            "minLength": 1
+          },
+          "focus_tag": {
+            "type": "string",
+            "description": "For no_skill_for_focus: the focus tag without a registered skill."
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "const": "no_skill_for_focus"
+                }
+              },
+              "required": [
+                "kind"
+              ]
+            },
+            "then": {
+              "required": [
+                "focus_tag"
+              ],
+              "not": {
+                "required": [
+                  "skill"
+                ]
+              }
+            },
+            "else": {
+              "required": [
+                "skill"
+              ]
+            }
+          }
+        ]
       }
     },
-    "summary": { "type": "string", "minLength": 1, "maxLength": 200 },
+    "summary": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
     "plan": {
       "type": "array",
       "description": "Skills in the approved plan, in dispatch order, e.g. ['01-registration', '02-call-flow'].",
-      "items": { "type": "string", "pattern": "^[0-9]{2}-[a-z0-9-]+$" }
+      "items": {
+        "type": "string",
+        "pattern": "^[0-9]{2}-[a-z0-9-]+$"
+      },
+      "minItems": 1,
+      "uniqueItems": true
     },
     "findings": {
       "type": "array",
-      "description": "Every usable finding returned by an implemented skill, unchanged.",
-      "items": { "$ref": "finding.schema.json" }
+      "description": "Every finding that passed the RECEIVE checks and is not a placeholder, unchanged; at most one per skill.",
+      "items": {
+        "$ref": "finding.schema.json"
+      }
     },
     "conflicts": {
       "type": "array",
       "description": "Disagreements between findings, listed, never resolved silently.",
       "items": {
         "type": "object",
-        "required": ["skills", "description"],
+        "required": [
+          "skills",
+          "description"
+        ],
         "additionalProperties": false,
         "properties": {
           "skills": {
             "type": "array",
             "minItems": 2,
-            "items": { "type": "string", "pattern": "^[0-9]{2}-[a-z0-9-]+$" }
+            "items": {
+              "type": "string",
+              "pattern": "^[0-9]{2}-[a-z0-9-]+$"
+            }
           },
-          "description": { "type": "string", "minLength": 1 }
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Frames both findings interpret differently."
+          }
         }
       }
     },
     "facts": {
       "type": "array",
       "description": "Deterministic facts: the evidence items the overall verdict rests on, copied unchanged from the findings.",
-      "items": { "$ref": "finding.schema.json#/properties/evidence/items" }
+      "items": {
+        "$ref": "finding.schema.json#/properties/evidence/items"
+      }
     },
     "interpretation": {
       "type": "string",
       "minLength": 1,
       "description": "AI interpretation, labeled as such. Suspected causes are marked as suspected."
     },
-    "next_check": { "type": ["string", "null"] }
+    "next_check": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
   },
   "allOf": [
     {
-      "if": { "properties": { "overall_verdict": { "const": "pass" } } },
-      "then": {
+      "if": {
         "properties": {
-          "overall_failure_stage": { "const": "none" },
-          "coverage": { "const": "complete" }
+          "overall_verdict": {
+            "const": "pass"
+          }
         }
       },
-      "else": { "properties": { "overall_failure_stage": { "not": { "const": "none" } } } }
+      "then": {
+        "properties": {
+          "overall_failure_stage": {
+            "const": "none"
+          },
+          "coverage": {
+            "const": "complete"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "overall_failure_stage": {
+            "not": {
+              "const": "none"
+            }
+          }
+        }
+      }
     },
     {
-      "if": { "properties": { "coverage": { "const": "complete" } } },
-      "then": { "properties": { "gaps": { "maxItems": 0 } } },
-      "else": { "properties": { "gaps": { "minItems": 1 } } }
+      "if": {
+        "properties": {
+          "coverage": {
+            "const": "complete"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "gaps": {
+            "maxItems": 0
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "gaps": {
+            "minItems": 1
+          }
+        }
+      }
     }
   ]
 }

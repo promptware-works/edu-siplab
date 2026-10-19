@@ -2,14 +2,15 @@
 """SIPLab skill linter — deterministic structure checks on protocol skills (tier 1 of governance).
 
 Tier 2, the judgment review, is the advisory skill reviewer in
-siplab/governance/skill-reviewer.agent.md. This linter checks only what a
+siplab/agents/skill-reviewer.agent.md. This linter checks only what a
 script can decide reliably; it never judges whether a procedure is correct.
 
 Checks
-  L1  Frontmatter       — parses; required metadata fields present and valid.
+  L1  Frontmatter       — parses as a mapping; required metadata fields present and valid;
+                          name, title, and folder agree.
   L2  Sections          — every ASPECT-S section (plus SIPLab's Scope) present, in order.
   L3  Status            — 'implemented': no placeholder section, no TODO, no authoring notes;
-                          'placeholder': a placeholder reply that validates as a finding.
+                          'placeholder': the fixed placeholder reply of boot Block 2.
   L4  Scope             — When to Use names the focus tag; every When NOT to Use line
                           redirects with '→ #N' to another catalogue skill.
   L5  Output contract   — the JSON example names all 10 shared keys.
@@ -17,7 +18,7 @@ Checks
   L7  Stricter mode     — the checklist names boot Blocks 2 and 5; inputs mark UNTRUSTED values;
                           the shared rules cite boot P1–P4.
   L8  Portability       — no vendor-specific features in the body.
-  L9  Catalogue         — the catalogue row matches number, focus tag, and status.
+  L9  Catalogue         — the catalogue row matches number, focus tag, status, and prompt file.
 
 Usage
   python3 siplab/tools/lint_skill.py <SKILL.md> [<SKILL.md> ...] [--catalogue <catalogue.md>]
@@ -71,20 +72,37 @@ def split_frontmatter(text):
     return text[4:end], text[end + 5:]
 
 
+FENCE = re.compile(r"^\s*(```|~~~)")
+
+
 def section(body, heading):
-    """Return the text under a heading, up to the next heading of the same or higher level."""
+    """Text under a heading up to the next heading of the same or higher level; headings in fences are ignored."""
     level = heading.count("#", 0, heading.index(" "))
-    lines = body.split("\n")
-    out, inside = [], False
-    for ln in lines:
-        m = re.match(r"^(#{1,6}) ", ln)
-        if inside and m and len(m.group(1)) <= level:
-            break
+    out, inside, fenced = [], False, False
+    for ln in body.split("\n"):
+        if FENCE.match(ln):
+            fenced = not fenced
+        elif not fenced:
+            m = re.match(r"^(#{1,6}) ", ln)
+            if inside and m and len(m.group(1)) <= level:
+                break
+            if not inside and ln.strip() == heading:
+                inside = True
+                continue
         if inside:
             out.append(ln)
-        if ln.strip() == heading:
-            inside = True
     return "\n".join(out) if inside else None
+
+
+def list_items(text):
+    """List items of a markdown block, with indented continuation lines joined."""
+    items = []
+    for ln in (text or "").split("\n"):
+        if re.match(r"^[-*+] ", ln):
+            items.append(ln[2:].strip())
+        elif items and ln.startswith(("  ", "\t")) and ln.strip():
+            items[-1] += " " + ln.strip()
+    return items
 
 
 def strip_fences(text):
@@ -93,13 +111,13 @@ def strip_fences(text):
 
 def load_catalogue(path):
     rows = {}
-    with open(path, encoding="utf-8") as fh:
+    with open(path, encoding="utf-8-sig") as fh:
         for ln in fh:
-            cells = [c.strip() for c in ln.strip().strip("|").split("|")]
+            cells = [c.strip().replace("\\|", "|") for c in re.split(r"(?<!\\)\|", ln.strip().strip("|"))]
             if len(cells) >= 8 and cells[0].isdigit():
                 rows[int(cells[0])] = {
-                    "name": cells[1], "focus": cells[2].strip("`"),
-                    "status": cells[6], "prompt": cells[7].strip("`"),
+                    "name": cells[1], "focus": cells[2].strip("` "),
+                    "status": cells[6].strip("` "), "prompt": cells[7].strip("` "),
                 }
     return rows
 
@@ -123,8 +141,13 @@ def lint(path, catalogue, schema_dir):
     except ImportError:
         rep.add("ERROR", "L1", "PyYAML is not installed; cannot read the frontmatter")
         return rep
-    text = open(path, encoding="utf-8").read()
+    try:
+        text = open(path, encoding="utf-8-sig").read().replace("\r\n", "\n")
+    except (OSError, UnicodeDecodeError) as exc:
+        rep.add("ERROR", "L1", f"cannot read the file: {exc}")
+        return rep
     fm_text, body = split_frontmatter(text)
+    folder = os.path.basename(os.path.dirname(os.path.abspath(path)))
 
     # L1 — frontmatter
     fm = None
@@ -135,18 +158,27 @@ def lint(path, catalogue, schema_dir):
             fm = yaml.safe_load(fm_text)
         except yaml.YAMLError as exc:
             rep.add("ERROR", "L1", f"frontmatter does not parse: {exc}")
+        else:
+            if not isinstance(fm, dict):
+                rep.add("ERROR", "L1", "frontmatter is not a YAML mapping")
     num = focus = status = None
     if isinstance(fm, dict):
-        meta = fm.get("metadata") or {}
-        core = meta.get("core") or {}
-        cls = core.get("classification") or {}
-        xs = meta.get("x-siplab") or {}
+        def sub(d, k):
+            v = d.get(k) if isinstance(d, dict) else None
+            if v is not None and not isinstance(v, dict):
+                rep.add("ERROR", "L1", f"frontmatter '{k}' is not a mapping")
+            return v if isinstance(v, dict) else {}
+        meta = sub(fm, "metadata")
+        core = sub(meta, "core")
+        cls = sub(core, "classification")
+        xs = sub(meta, "x-siplab")
         num, focus, status = xs.get("catalogue_number"), xs.get("focus_tag"), xs.get("status")
         problems = []
         if not re.match(r"^siplab-skill-\d{2}-[a-z0-9-]+$", str(fm.get("name", ""))):
             problems.append("name must be 'siplab-skill-NN-short-name'")
-        if not fm.get("description"):
-            problems.append("description is missing")
+        desc = fm.get("description")
+        if not isinstance(desc, str) or len(desc) < 40:
+            problems.append("description is missing or shorter than 40 characters (quote it if it contains ' #')")
         if cls.get("exec_form") != "prompt":
             problems.append("metadata.core.classification.exec_form must be 'prompt'")
         if cls.get("skill_kind") != "capability":
@@ -155,15 +187,17 @@ def lint(path, catalogue, schema_dir):
             problems.append("metadata.core.classification.permission_tier must be 'read'")
         if cls.get("trust_level") not in ("trusted", "semi-trusted", "untrusted"):
             problems.append("metadata.core.classification.trust_level is missing or invalid")
-        if not (core.get("provenance") or {}).get("version"):
+        if not sub(core, "provenance").get("version"):
             problems.append("metadata.core.provenance.version is missing")
-        if not isinstance(num, int) or not 1 <= num <= 99:
+        if isinstance(num, bool) or not isinstance(num, int) or not 1 <= num <= 99:
             problems.append("metadata.x-siplab.catalogue_number must be an integer")
         if focus not in FOCUS_TAGS:
             problems.append(f"metadata.x-siplab.focus_tag must be one of {', '.join(FOCUS_TAGS)}")
         if status not in ("implemented", "placeholder"):
             problems.append("metadata.x-siplab.status must be 'implemented' or 'placeholder'")
-        if isinstance(num, int) and not str(fm.get("name", "")).startswith(f"siplab-skill-{num:02d}-"):
+        if re.match(r"^\d{2}-", folder) and fm.get("name") != f"siplab-skill-{folder}":
+            problems.append(f"name must be 'siplab-skill-{folder}' (the folder name)")
+        elif isinstance(num, int) and not str(fm.get("name", "")).startswith(f"siplab-skill-{num:02d}-"):
             problems.append("name does not start with the catalogue number")
         for p in problems:
             rep.add("ERROR", "L1", p)
@@ -178,6 +212,8 @@ def lint(path, catalogue, schema_dir):
         slug = m.group(1)
         if isinstance(num, int) and not slug.startswith(f"{num:02d}-"):
             rep.add("ERROR", "L2", f"title '{slug}' does not match catalogue number {num}")
+        if re.match(r"^\d{2}-", folder) and slug != folder:
+            rep.add("ERROR", "L2", f"title '{slug}' does not match the folder name '{folder}'")
 
     # L2 — sections in order
     prose = strip_fences(body)
@@ -211,29 +247,49 @@ def lint(path, catalogue, schema_dir):
         if not has_placeholder:
             rep.add("ERROR", "L3", "status is 'placeholder' but there is no 'Placeholder Reply' section")
         else:
-            block = re.search(r"## Placeholder Reply.*?```json\n(.*?)```", body, re.S)
-            try:
-                obj = json.loads(block.group(1).replace("<test_id>", "placeholder-test")) if block else None
-            except ValueError as exc:
-                obj = None
-                rep.add("ERROR", "L3", f"placeholder reply is not valid JSON: {exc}")
-            if obj is not None:
+            ph = section(body, "## Placeholder Reply") or ""
+            block = re.search(r"```json\s*\n(.*?)```", ph, re.S | re.I)
+            obj = None
+            if not block:
+                rep.add("ERROR", "L3", "the 'Placeholder Reply' section has no ```json block")
+            else:
+                try:
+                    obj = json.loads(block.group(1))
+                except ValueError as exc:
+                    rep.add("ERROR", "L3", f"placeholder reply is not valid JSON: {exc}")
+            if isinstance(obj, dict):
+                errs = []
+                if obj.get("test_id") != "<test_id>":
+                    errs.append("'test_id' must be the literal '<test_id>'")
+                probe = dict(obj, test_id="placeholder-test")
                 v = finding_validator(schema_dir)
-                errs = [e.message for e in v.iter_errors(obj)] if v else []
-                if obj.get("placeholder") is not True:
-                    errs.append("'placeholder' must be true")
+                errs += [e.message for e in v.iter_errors(probe)] if v else []
+                fixed = {"verdict": "insufficient_evidence", "failure_stage": "unknown", "confidence": 0,
+                         "evidence": [], "rfc_ref": [], "placeholder": True}
+                for k, want in fixed.items():
+                    if obj.get(k) != want:
+                        errs.append(f"'{k}' must be {json.dumps(want)}")
+                missing = [k for k in SHARED_KEYS if k not in obj]
+                if missing:
+                    errs.append(f"missing shared keys {missing}")
+                extra = set(obj) - set(SHARED_KEYS) - {"placeholder"}
+                if extra:
+                    errs.append(f"unexpected keys {sorted(extra)}")
                 if slug and obj.get("skill") != slug:
                     errs.append(f"'skill' is '{obj.get('skill')}', expected '{slug}'")
+                for k, val in obj.items():
+                    if k != "test_id" and isinstance(val, str) and re.search(r"<[^>]+>", val):
+                        errs.append(f"'{k}' still holds a <…> slot")
                 for e in errs:
                     rep.add("ERROR", "L3", f"placeholder reply: {e}")
                 if not errs:
-                    rep.add("OK", "L3", "placeholder reply is a valid finding")
+                    rep.add("OK", "L3", "placeholder reply matches boot Block 2")
 
     # L4 — scope
     when = section(body, "### When to Use") or ""
     when_not = section(body, "### When NOT to Use") or ""
-    when_items = [ln for ln in when.split("\n") if ln.startswith("- ")]
-    not_items = [ln for ln in when_not.split("\n") if ln.startswith("- ")]
+    when_items = list_items(when)
+    not_items = list_items(when_not)
     l4 = []
     if not when_items:
         l4.append("'When to Use' has no list items")
@@ -242,7 +298,7 @@ def lint(path, catalogue, schema_dir):
     if not not_items:
         l4.append("'When NOT to Use' has no list items")
     for item in not_items:
-        r = re.search(r"→ #(\d+)\.?\s*$", item)
+        r = re.search(r"(?:→|->)\s*#(\d+)\b", item)
         if not r:
             l4.append(f"no '→ #N' redirect: {item[:70]}")
             continue
@@ -258,7 +314,7 @@ def lint(path, catalogue, schema_dir):
 
     # L5 — output contract keys
     oc = section(body, "## Output Contract") or ""
-    blocks = re.findall(r"```json\n(.*?)```", oc, re.S)
+    blocks = re.findall(r"```json\s*\n(.*?)```", oc, re.S | re.I)
     if not blocks:
         rep.add("ERROR", "L5", "Output Contract has no JSON example")
     else:
@@ -317,6 +373,8 @@ def lint(path, catalogue, schema_dir):
                 l9.append(f"catalogue focus tag is '{row['focus']}', skill says '{focus}'")
             if row["status"] != status:
                 l9.append(f"catalogue status is '{row['status']}', skill says '{status}'")
+            if re.match(r"^\d{2}-", folder) and row["prompt"] != f"skills/{folder}/SKILL.md":
+                l9.append(f"catalogue prompt file is '{row['prompt']}', expected 'skills/{folder}/SKILL.md'")
             for i in l9:
                 rep.add("ERROR", "L9", i)
             if not l9:
@@ -335,22 +393,23 @@ def main(argv=None):
 
     try:
         catalogue = load_catalogue(args.catalogue)
-    except OSError as exc:
+    except (OSError, UnicodeDecodeError) as exc:
         print(f"ERROR  cannot read catalogue: {exc}")
         return 2
 
-    failed = 0
+    failed, unreadable = 0, False
     for path in args.skills:
         if not os.path.isfile(path):
-            print(f"ERROR  {path}: not a file")
-            return 2
+            print(f"ERROR  {path}: not a file\n")
+            unreadable = True
+            continue
         rep = lint(path, catalogue, args.schema_dir)
         print(f"SIPLab skill linter — {path}")
         for level, check, msg in sorted(rep.items, key=lambda i: (i[0] != "OK", i[1])):
             print(f"{level:<6} {check}  {msg}")
         print(f"RESULT {'FAIL' if rep.errors else 'PASS'} — {len(rep.errors)} error(s)\n")
         failed += bool(rep.errors)
-    return 1 if failed else 0
+    return 2 if unreadable else (1 if failed else 0)
 
 
 if __name__ == "__main__":

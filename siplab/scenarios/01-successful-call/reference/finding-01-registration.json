@@ -18,8 +18,8 @@
     },
     {
       "frame": 8,
-      "field": "sip.Expires",
-      "value": "3600"
+      "field": "sip.Contact",
+      "value": "<sip:1001@192.168.56.21:5060;transport=udp>;expires=3600"
     },
     {
       "frame": 3,
@@ -33,19 +33,18 @@
     },
     {
       "frame": 4,
-      "field": "sip.Expires",
-      "value": "3600"
+      "field": "sip.Contact",
+      "value": "<sip:1002@192.168.56.22:5060;transport=udp>;expires=3600"
     }
   ],
   "rfc_ref": [
     "RFC 3261 §10.2",
     "RFC 3261 §10.3",
     "RFC 3261 §22.2",
-    "RFC 3261 §21.4.2",
-    "RFC 3261 §10.2.1.1"
+    "RFC 3261 §21.4.2"
   ],
   "next_check": null,
-  "rationale": "User 1001: REGISTER (frame 5) was challenged with 401 (frame 6); the credentialed REGISTER (frame 7) was accepted with 200 and Expires 3600 (frame 8). User 1002: same sequence in frames 1-4, 200 with Expires 3600 at frame 4. Expected: a challenged REGISTER is retried with credentials and accepted with 200 (RFC 3261 §10.3, §22.2). The initial 401 responses are normal challenges.",
+  "rationale": "User 1001: REGISTER (frame 5) was challenged with 401 (frame 6); the credentialed REGISTER (frame 7) was accepted with 200, Contact expires=3600 (frame 8). User 1002: REGISTER (frame 1) was challenged with 401 (frame 2); the credentialed REGISTER (frame 3) was accepted with 200, Contact expires=3600 (frame 4). Expected: a challenged REGISTER is retried with credentials and accepted with 200, which lists the granted binding (RFC 3261 §10.3, §22.2). The initial 401 responses are normal challenges.",
   "registrations": [
     {
       "user": "1001",

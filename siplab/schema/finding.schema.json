@@ -36,7 +36,11 @@
     },
     "verdict": {
       "type": "string",
-      "enum": ["pass", "fail", "insufficient_evidence"],
+      "enum": [
+        "pass",
+        "fail",
+        "insufficient_evidence"
+      ],
       "description": "Whether the SIP procedure under test completed successfully (pass), did not complete (fail), or cannot be decided from the evidence table (insufficient_evidence)."
     },
     "failure_stage": {
@@ -63,25 +67,75 @@
     },
     "evidence": {
       "type": "array",
-      "description": "Observations only, copied from the evidence table. Every item must exist in the table (checked by tools/validate_evidence.py).",
+      "description": "Observations only, copied from the test message. A frame item cites the evidence table; a stream item cites the RTP STREAMS block. Every item must exist in its source (checked by tools/validate_evidence.py).",
       "items": {
-        "type": "object",
-        "required": ["frame", "field", "value"],
-        "additionalProperties": false,
-        "properties": {
-          "frame": { "type": "integer", "minimum": 1 },
-          "field": { "type": "string", "minLength": 1 },
-          "value": { "type": "string" }
-        }
+        "oneOf": [
+          {
+            "type": "object",
+            "title": "frame item",
+            "required": [
+              "frame",
+              "field",
+              "value"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "frame": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "field": {
+                "type": "string",
+                "minLength": 1
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          {
+            "type": "object",
+            "title": "stream item",
+            "required": [
+              "stream",
+              "field",
+              "value"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "stream": {
+                "type": "string",
+                "pattern": "^0x[0-9A-Fa-f]{1,8}$",
+                "description": "SSRC of the RTP stream, as printed in the RTP STREAMS block."
+              },
+              "field": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Column heading of the RTP STREAMS block, e.g. 'Lost'."
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        ]
       }
     },
     "rfc_ref": {
       "type": "array",
-      "items": { "type": "string", "minLength": 1 },
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
       "description": "Specification references, e.g. 'RFC 3261 §22.2'."
     },
     "next_check": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "description": "One suggested manual check, or null. Never an automatic action."
     },
     "rationale": {
@@ -96,9 +150,29 @@
   },
   "allOf": [
     {
-      "if": { "properties": { "verdict": { "const": "pass" } } },
-      "then": { "properties": { "failure_stage": { "const": "none" } } },
-      "else": { "properties": { "failure_stage": { "not": { "const": "none" } } } }
+      "if": {
+        "properties": {
+          "verdict": {
+            "const": "pass"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "failure_stage": {
+            "const": "none"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "failure_stage": {
+            "not": {
+              "const": "none"
+            }
+          }
+        }
+      }
     }
   ]
 }

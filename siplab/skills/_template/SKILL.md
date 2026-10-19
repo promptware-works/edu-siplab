@@ -1,6 +1,6 @@
 ---
 name: siplab-skill-NN-short-name
-description: <One line — what the skill decides, from which evidence, and the shared finding plus its extra keys. Paste the body when the orchestrator dispatches skill #N.>
+description: "<One line — what the skill decides, from which evidence, and the shared finding plus its extra keys. Paste the body when the orchestrator dispatches skill #N. Keep the quotes: an unquoted ' #' starts a YAML comment.>"
 user-invocable: false
 metadata:
   core:
@@ -100,8 +100,8 @@ Before producing any output, confirm in this conversation:
 
 **HALT-on-failure**: if item 1, 2, or 3 fails, reply only with
 `{"error": "<missing item>", "resolution": "<what the operator must paste>"}`.
-If item 4 fails, return a finding with verdict `insufficient_evidence` that names
-the missing columns. Never proceed from training knowledge alone.
+If item 4 fails, return a finding with verdict `insufficient_evidence`, failure
+stage `unknown`, and the missing columns named in `rationale`. Never proceed from training knowledge alone.
 
 ---
 
@@ -137,7 +137,8 @@ the missing columns. Never proceed from training knowledge alone.
 4. Compose the finding: copy evidence items exactly (boot P2); write `rationale` as observations → expected behavior → `Suspected cause:` if any.
 5. Silently check the finding against the Quality Gates and Shared Rules; fix violations; do not show the check.
 
-**Verdict table**
+**Verdict table** — the verdicts follow boot Block 2's *Verdict meaning*
+(procedure skill or assessment skill).
 
 | Condition (first match wins) | `verdict` | `failure_stage` |
 | --- | --- | --- |
@@ -152,7 +153,7 @@ the missing columns. Never proceed from training knowledge alone.
 Produces one JSON object per `schema/finding.schema.json` and no prose outside it.
 
 - `skill` — `"NN-short-name"`.
-- `evidence[]` — the frames that decide the verdict, copied exactly (mandatory unless `insufficient_evidence` because rows are absent).
+- `evidence[]` — the frame items (or stream items, for RTP STREAMS data) that decide the verdict, copied exactly; at least one for `pass` or `fail`.
 - `rfc_ref` — TODO — the sections your Procedure applies.
 - `<extra key>` — TODO — semantics of each skill-specific key.
 
@@ -181,7 +182,7 @@ Produces one JSON object per `schema/finding.schema.json` and no prose outside i
 | Shared keys present | all 10 | Add the missing keys before replying |
 | Evidence exists in the table | 100 % of items | Remove or correct the item |
 | `failure_stage` consistent with `verdict` | `none` iff `pass` | Correct the stage |
-| Decisive frames cited | ≥ 1 for `pass` / `fail` | Cite them, or return `insufficient_evidence` |
+| Decisive items cited | ≥ 1 for `pass` / `fail` | Cite them, or return `insufficient_evidence` |
 | TODO — a skill-specific gate | TODO | TODO |
 
 ## Shared Rules

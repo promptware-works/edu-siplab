@@ -23,12 +23,14 @@
     }
   ],
   "rfc_ref": [
-    "RFC 3261 §10.2.2",
+    "RFC 3261 §10.2",
+    "RFC 3261 §10.3",
     "RFC 3261 §22.2",
-    "RFC 3261 §10.3"
+    "RFC 3261 §21.4.2",
+    "RFC 3261 §10.2.2"
   ],
   "next_check": null,
-  "rationale": "User 1001 registered at frame 4 (200, Expires 3600). Its last REGISTER transaction is a credentialed de-registration (frame 22, Expires 0) answered with 200 (frame 23). Expected: a REGISTER with Expires 0 removes the binding (RFC 3261 §10.2.2). This is a de-registration, not a failure.",
+  "rationale": "User 1001: REGISTER (frame 1) was challenged with 401 (frame 2); the credentialed REGISTER (frame 3) was accepted with 200, Contact expires=3600 (frame 4). Its last REGISTER transaction is a de-registration: REGISTER with Expires 0 (frame 20) was challenged with 401 (frame 21); the credentialed REGISTER with Expires 0 (frame 22) was accepted with 200, Expires 0 (frame 23). Expected: a REGISTER with Expires 0 removes the binding (RFC 3261 §10.2.2). This is a de-registration, not a failure.",
   "registrations": [
     {
       "user": "1001",

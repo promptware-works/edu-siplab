@@ -1,6 +1,7 @@
 ---
 name: siplab-orchestrator
 description: Run this chat as the SIPLab AI SIP Test Engineer orchestrator (Plan → Approve → Execute over saved SIP test evidence).
+tools: ['search/codebase']
 user-invocable: true
 ---
 

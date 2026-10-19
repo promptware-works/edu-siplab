@@ -37,19 +37,18 @@
         },
         {
           "frame": 4,
-          "field": "sip.Expires",
-          "value": "3600"
+          "field": "sip.Contact",
+          "value": "<sip:1001@192.168.56.21:5060;transport=udp>;expires=3600"
         }
       ],
       "rfc_ref": [
         "RFC 3261 §10.2",
         "RFC 3261 §10.3",
         "RFC 3261 §22.2",
-        "RFC 3261 §21.4.2",
-        "RFC 3261 §10.2.1.1"
+        "RFC 3261 §21.4.2"
       ],
       "next_check": null,
-      "rationale": "User 1001: REGISTER (frame 1) was challenged with 401 (frame 2); the credentialed REGISTER (frame 3) was accepted with 200 and Expires 3600 (frame 4). Expected: a challenged REGISTER is retried with credentials and accepted (RFC 3261 §10.3, §22.2). User 1003 sent no REGISTER and has role callee; it was not evaluated.",
+      "rationale": "User 1001: REGISTER (frame 1) was challenged with 401 (frame 2); the credentialed REGISTER (frame 3) was accepted with 200, Contact expires=3600 (frame 4). Expected: a challenged REGISTER is retried with credentials and accepted with 200, which lists the granted binding (RFC 3261 §10.3, §22.2). The initial 401 responses are normal challenges. User 1003 has role callee and sent no REGISTER; it was not evaluated.",
       "registrations": [
         {
           "user": "1001",
@@ -85,10 +84,10 @@
     },
     {
       "frame": 4,
-      "field": "sip.Expires",
-      "value": "3600"
+      "field": "sip.Contact",
+      "value": "<sip:1001@192.168.56.21:5060;transport=udp>;expires=3600"
     }
   ],
   "interpretation": "AI interpretation: skill #1 shows user 1001 registered. No skill analyzed the INVITE transaction, so the outcome of the call attempt is not established by this report.",
-  "next_check": "Implement skill #2 and re-run the test."
+  "next_check": "Implement skill #2 (Call Setup & Teardown) and re-run the test."
 }

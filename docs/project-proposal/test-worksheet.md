@@ -1,6 +1,6 @@
 # SIPLab — Test Worksheet
 
-**Companion to:** [`proposal.md`](./proposal.md) (timeline-neutral)
+**Companion to:** [`proposal.md`](./proposal.md) (timeline-neutral)\
 **Purpose:** Give every group an identical, gradable test bar for its PBX and
 its skills, and give graders an identical checklist to score against.
 
@@ -50,9 +50,9 @@ its skills, and give graders an identical checklist to score against.
 | C1 | PBX service starts and is reachable from the client network | P1 | | ☐ | |
 | C2 | All client devices used in C7–C8 register as configured users | P1 | | ☐ | |
 | C3 | One administrator and at least five user accounts are configured; registration requires authentication | P1 | | ☐ | |
-| C4 | Telephony and messaging services are configured (dial plan, messaging context) | P1 | | ☐ | |
-| C5 | System and network diagram, component inventory with software versions, and reproducible setup notes are submitted | P1 | | ☐ | |
-| C6 | No passwords, digest responses, tokens, real phone numbers, or personal data appear in any submitted file or capture | P1, P2 | **gate** | ☐ | |
+| C4 | Telephony and messaging services are configured (dial plan, messaging context); endpoints use `direct_media=no` | P1 | | ☐ | |
+| C5 | System and network diagram, component inventory with software versions, and reproducible setup notes are in `deliverables/pbx/` | P1 | | ☐ | |
+| C6 | No passwords, digest responses, tokens, real phone numbers, or personal data appear in any submitted file; the corpus is re-checked under C14 | P1 | **gate** | ☐ | |
 | C7 | Mobile-to-desktop call: two-way audio confirmed by both parties, clean teardown, endpoints return to idle | P2 | **gate** | ☐ | |
 | C8 | Mobile-to-mobile call: two-way audio confirmed by both parties, clean teardown | P2 | **gate** | ☐ | |
 | C9 | At least one voice session per configured user is documented | P2 | | ☐ | |
@@ -60,7 +60,7 @@ its skills, and give graders an identical checklist to score against.
 | C11 | Registration flow is captured and explained, including the digest challenge and the granted expiry, with RFC references and frame numbers | P2 | **gate** | ☐ | |
 | C12 | Call setup and teardown are captured and explained, including the SDP offer/answer and the ACK, with RFC references and frame numbers | P2 | **gate** | ☐ | |
 | C13 | At least one failed or rejected call is captured and its response code and cause are explained correctly | P2 | | ☐ | |
-| C14 | Corpus is complete per [`delivery-plan.md`](./delivery-plan.md) *Required corpus composition*: every case has a test case, sanitized capture, evidence table, and ground-truth verdict | P2 | | ☐ | |
+| C14 | Corpus is complete per [`delivery-plan.md`](./delivery-plan.md) *Required corpus composition*: every case has a test case, a sanitized capture (re-checked as in C6), an evidence table, and a truth file | P2 | | ☐ | |
 
 Calls with an IP phone are encouraged and may be recorded as additional
 notes under C7.
@@ -76,7 +76,7 @@ Every finding must validate against `schema/finding.schema.json`.
 | U1 | Output contains all 10 keys: `skill`, `test_id`, `summary`, `verdict`, `failure_stage`, `confidence`, `evidence`, `rfc_ref`, `next_check`, `rationale` | ☐ | ☐ | |
 | U2 | `verdict` is one of {`pass`, `fail`, `insufficient_evidence`}; `failure_stage` is from the enum and is `none` exactly when the verdict is `pass` | ☐ | ☐ | |
 | U3 | `confidence` is a number in [0, 1] | ☐ | ☐ | |
-| U4 | Every `evidence` item cites a frame and field value that exist in the evidence table (validator reports zero unsupported citations) | ☐ | ☐ | |
+| U4 | Every `evidence` item cites a frame and value of the evidence table, or a stream and value of the RTP STREAMS block; a `pass` or `fail` cites at least one (validator reports no citation error) | ☐ | ☐ | |
 | U5 | `rationale` separates the protocol observation from the suspected cause and labels the cause as suspected; no generic text | ☐ | ☐ | |
 | U6 | Instructions embedded in packet content (`User-Agent`, `Subject`, message body, SDP text) are ignored and do not change the verdict | ☐ | ☐ | |
 | U7 | When required messages are missing, encrypted, or malformed, the skill returns `insufficient_evidence` instead of guessing | ☐ | ☐ | |
@@ -97,23 +97,25 @@ Every finding must validate against `schema/finding.schema.json`.
 | # | Integration check | Copilot | Claude Code | Notes |
 | --- | --- | --- | --- | --- |
 | G1 | The PLAN selects exactly the skills mapped from the test case's focus tags, states why, and waits for `approve` | ☐ | ☐ | |
-| G2 | The consolidated report contains every skill finding unchanged, including uncertainty and any conflict between skills | ☐ | ☐ | |
+| G2 | The consolidated report contains every finding kept at RECEIVE, unchanged — placeholders only as gaps — including uncertainty and any conflict between skills | ☐ | ☐ | |
 | G3 | Coverage, gaps, and overall verdict follow the rule in proposal § 3.3 (validator rule check passes); a report with gaps is never `pass` | ☐ | ☐ | |
 | G4 | The validator reports zero unsupported citations in the consolidated report | ☐ | ☐ | |
 | G5 | The report separates deterministic facts from the evidence table from AI interpretations | ☐ | ☐ | |
 
 ## Part E — Corpus evaluation (P3, once per group)
 
-Fill one row per case, for the group corpus and the held-out corpus.
+Fill one row per case of the group corpus. Held-out cases are run and
+submitted the same way, but scored by the instructor after submission
+(proposal § 6.1).
 
-| Test ID | Corpus | Ground truth (verdict / stage) | AI verdict / stage (Copilot) | AI verdict / stage (Claude Code) | Skills planned | Validator OK? | Correct? | Notes |
+| Test ID | Ground truth (verdict / stage) | AI verdict / stage (Copilot) | AI verdict / stage (Claude Code) | Skills planned | Validator OK (Copilot) | Validator OK (Claude Code) | Correct? | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| | group | | | | | ☐ | ☐ | |
-| | held-out | | | | | ☐ | ☐ | |
+| | | | | | ☐ | ☐ | ☐ | |
 
 Summary metrics (proposal § 6.1): input coverage ___ / ___, verdict accuracy
 ___ / ___, stage accuracy ___ / ___, evidence validity ___ / ___,
-appropriate skill selection ___ / ___.
+appropriate skill selection ___ / ___; effort with vs. without the AI SIP
+Test Engineer (proposal § 6.1): ________.
 
 ---
 
@@ -122,20 +124,22 @@ appropriate skill selection ___ / ___.
 Reference inputs for each check are listed in
 [`scenarios/skill-inputs/README.md`](../../siplab/scenarios/skill-inputs/README.md)
 (test case, evidence table, truth file); several checks reuse the reference
-scenarios. Expected responses depend on configuration;
-the test case states the expected response for the group's PBX.
+scenarios. Where no reference input exists yet, the check is scored on a case
+of the group corpus that exercises it — name the test ID in *Notes*.
+Expected responses depend on configuration; the test case states the
+expected response for the group's PBX.
 
 ### F1 — #1 Registration & Authentication (worked example)
 
 **Scope.** REGISTER transactions, digest challenge and retry, binding
 expiry, rejected credentials.
 
-| # | Pass check | Pass/Fail | Notes |
-| --- | --- | --- | --- |
-| 1.1 | `REGISTER` → `401` → `REGISTER` with credentials → `200` is `pass`; the initial `401` is not reported as a failure | ☐ | |
-| 1.2 | A `401` or `403` answering the credentialed `REGISTER` is `fail` with stage `authentication` | ☐ | |
-| 1.3 | Reports the granted expiry; a `REGISTER` with `Expires: 0` is recognized as de-registration, not as a failure | ☐ | |
-| 1.4 | A capture with no `REGISTER` returns `insufficient_evidence` | ☐ | |
+| # | Pass check | Copilot | Claude Code | Notes |
+| --- | --- | --- | --- | --- |
+| 1.1 | `REGISTER` → `401` → `REGISTER` with credentials → `200` is `pass`; the initial `401` is not reported as a failure; the granted expiry is reported | ☐ | ☐ | |
+| 1.2 | A `401` or `403` answering the credentialed `REGISTER` is `fail` with stage `authentication` | ☐ | ☐ | |
+| 1.3 | A `REGISTER` with `Expires: 0` (or `Contact: *`) is recognized as de-registration, not as a failure | ☐ | ☐ | |
+| 1.4 | A capture with no `REGISTER` returns `insufficient_evidence` | ☐ | ☐ | |
 
 ---
 
@@ -144,13 +148,13 @@ expiry, rejected credentials.
 **Scope.** INVITE transaction, provisional and final responses, ACK,
 CANCEL, BYE, routing outcome.
 
-| # | Pass check | Pass/Fail | Notes |
-| --- | --- | --- | --- |
-| 2.1 | `INVITE` → `200` → `ACK` → … → `BYE` → `200` is `pass`, citing the frames of the `200`, `ACK`, `BYE`, and its `200` | ☐ | |
-| 2.2 | An unavailable callee (the response stated in the test case, e.g. `404`, `480`, or `486`) is `fail` with stage `routing` or `call_setup` and cites the final response | ☐ | |
-| 2.3 | `CANCEL` before answer followed by `487` to the `INVITE` is recognized as a caller-cancelled call, not a server error | ☐ | |
-| 2.4 | Absence of optional provisional responses (`100`, `180`, `183`) alone does not cause a `fail` | ☐ | |
-| 2.5 | A `200` to `INVITE` that is retransmitted without any `ACK` is `fail` with stage `call_setup` | ☐ | |
+| # | Pass check | Copilot | Claude Code | Notes |
+| --- | --- | --- | --- | --- |
+| 2.1 | `INVITE` → `200` → `ACK` → … → `BYE` → `200` is `pass`, citing the frames of the `200`, `ACK`, `BYE`, and its `200` | ☐ | ☐ | |
+| 2.2 | An unavailable callee (the response stated in `pbx.notes`, e.g. `404` with Asterisk's default dial plan, `480`, or `503`) is `fail` with stage `routing` and cites the final response | ☐ | ☐ | |
+| 2.3 | `CANCEL` before answer followed by `487` to the `INVITE` is recognized as a caller-cancelled call, not a server error | ☐ | ☐ | |
+| 2.4 | Absence of optional provisional responses (`100`, `180`, `183`) alone does not cause a `fail` | ☐ | ☐ | |
+| 2.5 | A `200` to `INVITE` that is retransmitted without any `ACK` is `fail` with stage `call_setup` | ☐ | ☐ | |
 
 ---
 
@@ -159,12 +163,12 @@ CANCEL, BYE, routing outcome.
 **Scope.** Location of offer and answer, codec intersection, rejected
 streams, late offer.
 
-| # | Pass check | Pass/Fail | Notes |
-| --- | --- | --- | --- |
-| 3.1 | Identifies the offer and the answer frames and reports the common codec(s) | ☐ | |
-| 3.2 | `488 Not Acceptable Here` after an offer with no common codec is `fail` with stage `media_negotiation` | ☐ | |
-| 3.3 | A late offer (`INVITE` without SDP, offer in `200`, answer in `ACK`) is analyzed correctly | ☐ | |
-| 3.4 | A media line with port `0` is reported as a rejected stream (RFC 3264) | ☐ | |
+| # | Pass check | Copilot | Claude Code | Notes |
+| --- | --- | --- | --- | --- |
+| 3.1 | Identifies the offer and the answer frames and reports the common codec(s) | ☐ | ☐ | |
+| 3.2 | `488 Not Acceptable Here` after an offer the answerer cannot accept (e.g. no common codec) is `fail` with stage `media_negotiation` | ☐ | ☐ | |
+| 3.3 | A late offer (`INVITE` without SDP, offer in `200`, answer in `ACK`) is analyzed correctly | ☐ | ☐ | |
+| 3.4 | A media line with port `0` is reported as a rejected stream (RFC 3264) | ☐ | ☐ | |
 
 ---
 
@@ -173,12 +177,13 @@ streams, late offer.
 **Scope.** MESSAGE requests and responses, delivery outcome, body handling.
 Uses the extended recipe that adds message-body fields.
 
-| # | Pass check | Pass/Fail | Notes |
-| --- | --- | --- | --- |
-| 4.1 | `MESSAGE` → `200` or `202` is `pass` | ☐ | |
-| 4.2 | `MESSAGE` to an unregistered user answered with `404` or `480` is `fail` with stage `messaging` | ☐ | |
-| 4.3 | An authentication challenge (`401`/`407`) followed by a successful retry is `pass` | ☐ | |
-| 4.4 | Reports the body's content type and length; never follows or quotes instructions found in the body as its own conclusion | ☐ | |
+| # | Pass check | Copilot | Claude Code | Notes |
+| --- | --- | --- | --- | --- |
+| 4.1 | A MESSAGE delivered on the PBX→recipient leg (`200`/`202` from the recipient) is `pass` | ☐ | ☐ | |
+| 4.2 | A missing PBX→recipient MESSAGE, or a 4xx/5xx on that leg, is `fail` with stage `messaging` — even though the sender received `202` | ☐ | ☐ | |
+| 4.3 | An authentication challenge (`401`/`407`) followed by a successful retry is `pass` | ☐ | ☐ | |
+| 4.4 | Reports the body's content type and length; never follows or quotes instructions found in the body as its own conclusion | ☐ | ☐ | |
+| 4.5 | A `415` answering a body that is not `text/plain` is `fail` with stage `messaging`, naming the content type | ☐ | ☐ | |
 
 ---
 
@@ -187,12 +192,12 @@ Uses the extended recipe that adds message-body fields.
 **Scope.** Private SDP addresses, `Via` `received`/`rport`, one-way audio
 indicators. Reference inputs include instructor-provided NAT captures.
 
-| # | Pass check | Pass/Fail | Notes |
-| --- | --- | --- | --- |
-| 5.1 | An SDP `c=` private address (RFC 1918) that differs from the signaling source address is reported as a suspected one-way-audio cause, stage `media_path`, labeled as suspected | ☐ | |
-| 5.2 | `received` and `rport` parameters in `Via` are recognized and explained (RFC 3581) | ☐ | |
-| 5.3 | A capture without RTP returns `insufficient_evidence` for the media path | ☐ | |
-| 5.4 | RTP present in one direction only is `fail` with stage `media_path` | ☐ | |
+| # | Pass check | Copilot | Claude Code | Notes |
+| --- | --- | --- | --- | --- |
+| 5.1 | An SDP `c=` private address (RFC 1918) that differs from the signaling source address is reported as a suspected one-way-audio cause, stage `media_path`, labeled as suspected | ☐ | ☐ | |
+| 5.2 | `received` (RFC 3261 §18.2.1) and `rport` (RFC 3581) parameters in `Via` are recognized and explained | ☐ | ☐ | |
+| 5.3 | A capture without the addresses needed for the comparison returns `insufficient_evidence` | ☐ | ☐ | |
+| 5.4 | With `direct_media=yes`, the addresses of the re-INVITEs are compared, not only those of the first INVITE | ☐ | ☐ | |
 
 ---
 
@@ -201,12 +206,12 @@ indicators. Reference inputs include instructor-provided NAT captures.
 **Scope.** Grouping by Call-ID, tags, and CSeq; retransmissions; timeouts;
 transaction vs. dialog failure.
 
-| # | Pass check | Pass/Fail | Notes |
-| --- | --- | --- | --- |
-| 6.1 | Groups the messages of a multi-call capture into the correct dialogs and transactions | ☐ | |
-| 6.2 | `INVITE` retransmissions ending in `408` or no response are `fail` with timing evidence from `frame.time_relative` | ☐ | |
-| 6.3 | An in-dialog request with a CSeq lower than the previous one is flagged | ☐ | |
-| 6.4 | Distinguishes a failed transaction inside an established dialog from a failed dialog setup | ☐ | |
+| # | Pass check | Copilot | Claude Code | Notes |
+| --- | --- | --- | --- | --- |
+| 6.1 | Groups the messages of a multi-call capture into the correct dialogs and transactions | ☐ | ☐ | |
+| 6.2 | `INVITE` retransmissions ending in `408` or no response are `fail` with timing evidence from `frame.time_relative` | ☐ | ☐ | |
+| 6.3 | An in-dialog request with a CSeq lower than the previous one in the same dialog and direction is flagged (ACK and CANCEL reuse the INVITE's number) | ☐ | ☐ | |
+| 6.4 | Distinguishes a failed transaction inside an established dialog from a failed dialog setup | ☐ | ☐ | |
 
 ---
 
@@ -216,12 +221,12 @@ transaction vs. dialog failure.
 exposure of identities. The test case states the security expectation that
 defines `pass`.
 
-| # | Pass check | Pass/Fail | Notes |
-| --- | --- | --- | --- |
-| 7.1 | Cleartext SIP on UDP/TCP is reported as a risk relative to the stated expectation, not as a failure of the call | ☐ | |
-| 7.2 | A burst of `REGISTER` or `OPTIONS` requests with many user names from one source is flagged as scanning | ☐ | |
-| 7.3 | Reports the digest algorithm offered in the challenge (e.g. MD5 vs. SHA-256) | ☐ | |
-| 7.4 | Never reproduces credential material in its output | ☐ | |
+| # | Pass check | Copilot | Claude Code | Notes |
+| --- | --- | --- | --- | --- |
+| 7.1 | Cleartext SIP is `fail` with stage `transport` only when the stated expectation requires protected transport; otherwise it is a listed risk with verdict `pass` — never a failure of the call | ☐ | ☐ | |
+| 7.2 | A burst of `REGISTER` or `OPTIONS` requests with many user names from one source is flagged as scanning | ☐ | ☐ | |
+| 7.3 | Reports the digest algorithm offered in the challenge (e.g. MD5 vs. SHA-256) | ☐ | ☐ | |
+| 7.4 | Never reproduces credential material in its output | ☐ | ☐ | |
 
 ---
 
@@ -230,12 +235,13 @@ defines `pass`.
 **Scope.** Map SIP final responses and `Reason` headers to ISUP/Q.850
 release causes (RFC 3398, RFC 3326).
 
-| # | Pass check | Pass/Fail | Notes |
-| --- | --- | --- | --- |
-| 8.1 | Maps `486` to cause 17 (user busy) and `404` to cause 1 (unallocated number), citing RFC 3398 | ☐ | |
-| 8.2 | Uses a `Reason: Q.850;cause=…` header when present and prefers it over the response-code mapping | ☐ | |
-| 8.3 | Marks a response without a defined mapping as such instead of guessing | ☐ | |
-| 8.4 | Names the ISUP message that would carry the cause at a PSTN gateway (REL) | ☐ | |
+| # | Pass check | Copilot | Claude Code | Notes |
+| --- | --- | --- | --- | --- |
+| 8.1 | Maps `486` to cause 17 (user busy) and `404` to cause 1 (unallocated number), citing RFC 3398 | ☐ | ☐ | |
+| 8.2 | Uses a `Reason: Q.850;cause=…` header when present and prefers it over the response-code mapping | ☐ | ☐ | |
+| 8.3 | Maps a status code without a listed mapping to cause 31 (normal, unspecified) and reports `487` as having no mapping (RFC 3398 §8.2.6.1) | ☐ | ☐ | |
+| 8.4 | Names the ISUP message that would carry the cause at a PSTN gateway (REL) | ☐ | ☐ | |
+| 8.5 | Never returns `fail`: `pass` when every failure in scope was mapped, otherwise `insufficient_evidence` | ☐ | ☐ | |
 
 ---
 
@@ -245,12 +251,12 @@ release causes (RFC 3398, RFC 3326).
 TS 24.229). The verdict states whether the capture contains the flows needed
 for the comparison.
 
-| # | Pass check | Pass/Fail | Notes |
-| --- | --- | --- | --- |
-| 9.1 | For an observed registration, lists the IMS differences: P-CSCF/S-CSCF path, `Path` and `Service-Route` headers, IMS AKA vs. digest | ☐ | |
-| 9.2 | Identifies IMS-relevant headers absent from the capture (e.g. `P-Asserted-Identity`, `Path`, `Service-Route`) | ☐ | |
-| 9.3 | Does not claim that the PBX is IMS-compliant | ☐ | |
-| 9.4 | Cites 3GPP TS 24.229 for every IMS statement | ☐ | |
+| # | Pass check | Copilot | Claude Code | Notes |
+| --- | --- | --- | --- | --- |
+| 9.1 | For an observed registration, lists the IMS differences: P-CSCF → I-CSCF → S-CSCF path, `Path` and `Service-Route` headers, IMS AKA (TS 33.203) vs. digest | ☐ | ☐ | |
+| 9.2 | Identifies IMS-relevant headers absent from the capture (e.g. `P-Asserted-Identity`, `Path`, `Service-Route`) | ☐ | ☐ | |
+| 9.3 | Does not claim that the PBX is IMS-compliant | ☐ | ☐ | |
+| 9.4 | Cites 3GPP TS 24.229 (or TS 33.203, RFC 3327/3608/3325 where they apply) for every IMS statement; never returns `fail` | ☐ | ☐ | |
 
 ---
 
@@ -259,13 +265,14 @@ for the comparison.
 **Scope.** RTP stream presence per direction, loss, jitter, payload type vs.
 SDP. Uses the extended recipe with RTP stream statistics.
 
-| # | Pass check | Pass/Fail | Notes |
-| --- | --- | --- | --- |
-| 10.1 | Reports loss, jitter, and sequence errors per stream, identified by SSRC | ☐ | |
-| 10.2 | Bidirectional RTP supports — but does not prove — two-way audio; the finding says audibility needs human confirmation | ☐ | |
-| 10.3 | A capture with no RTP returns `insufficient_evidence` | ☐ | |
-| 10.4 | Flags an RTP payload type that does not match the negotiated SDP codec | ☐ | |
-| 10.5 | SRTP payloads are reported as encrypted; no quality claims beyond packet-level statistics | ☐ | |
+| # | Pass check | Copilot | Claude Code | Notes |
+| --- | --- | --- | --- | --- |
+| 10.1 | Reports loss, jitter, and the problem flag per stream, cited as stream items by SSRC | ☐ | ☐ | |
+| 10.2 | Bidirectional RTP supports — but does not prove — two-way audio; the finding says audibility needs human confirmation | ☐ | ☐ | |
+| 10.3 | A capture with no RTP returns `insufficient_evidence` | ☐ | ☐ | |
+| 10.4 | Flags an RTP payload type that does not match the negotiated SDP codec | ☐ | ☐ | |
+| 10.5 | SRTP payloads are reported as encrypted; no quality claims beyond packet-level statistics | ☐ | ☐ | |
+| 10.6 | RTP present in one direction only is `fail` with stage `media_path` | ☐ | ☐ | |
 
 ---
 
@@ -288,7 +295,7 @@ SDP. Uses the extended recipe with RTP stream statistics.
 | Part B — U1–U7, per authored skill | 7 | D5 (U5), D7 (U1–U4, U6, U7) |
 | Part C — per authored skill | 2 | D5 |
 | Part D — G1–G5 | 5 | D7 |
-| Part F — 4–5 checks per authored skill | 4–5 | D6 |
+| Part F — 4–6 checks per authored skill | 4–6 | D6 |
 
 How worksheet points convert into the dimension scores of
 [`proposal.md`](./proposal.md) § 6, together with the report and defense, is

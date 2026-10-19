@@ -1,11 +1,10 @@
 # SIPLab — Student Project Proposal
 
-**Subject area:** Signaling, VoIP, and communication networks
-**Project:** SIPLab: Build and Test a SIP PBX with an AI Test Engineer
-**Duration:** Variable — the delivery schedule lives in
-[`delivery-plan.md`](./delivery-plan.md) (6-week and 3-week variants defined)
-**Cohort:** Groups of up to 3 students; each group delivers the whole project as a team
-**Deliverable form:** A working SIP PBX lab, prompt-defined AI skills (no application code), and one group report (`report.md`)
+**Subject area:** Signaling, VoIP, and communication networks\
+**Project:** SIPLab: Build and Test a SIP PBX with an AI Test Engineer\
+**Duration:** Variable — the delivery schedule lives in [`delivery-plan.md`](./delivery-plan.md) (6-week and 3-week variants defined)\
+**Cohort:** Groups of up to 3 students; each group delivers the whole project as a team\
+**Deliverable form:** A working SIP PBX lab, prompt-defined AI skills (no application code), and one group report (`report.md`)\
 **Version:** 1.0-draft — 2026-10-18 (timeline-neutral; delivery schedule in `delivery-plan.md`)
 
 > **How this document is organized.** This proposal is **timeline-neutral**:
@@ -167,7 +166,7 @@ subject of phase 3 is AI-assisted engineering, the policy is about
 ## 3. Architecture — SIP PBX Lab + In-Chat AI SIP Test Engineer
 
 ```text
- ┌──────────────────────────── SIP PBX LAB (phases 1–2) ───────────────────────────┐
+ ┌──────────────────────────── SIP PBX LAB (phases 1–2) ────────────────────────────┐
  │   [Mobile client]   [Mobile client]   [Desktop client]   ([IP phone])            │
  │          \                 |                 /                                   │
  │           └──── SIP / SDP / RTP over isolated LAN or Wi-Fi ────┐                 │
@@ -203,8 +202,9 @@ subject of phase 3 is AI-assisted engineering, the policy is about
 The lab must include:
 
 1. **System components:** one server unit running an open-source SIP PBX
-   such as Asterisk, and **at least two end devices** (PCs, laptops,
-   smartphones, or IP phones). Server and desktop clients may run as
+   such as Asterisk, and **at least three end devices**: two smartphones
+   and one desktop or laptop, as the calls in the functional requirements
+   need; a hardware IP phone is optional. Server and desktop clients may run as
    virtual machines, including on one physical host; document which
    components share a host and any resulting limits on measurements.
 2. **Network infrastructure:** an Ethernet- or Wi-Fi-based IP network.
@@ -216,6 +216,8 @@ The lab must include:
    configuration of users and sessions documented.
 7. **Analysis:** SIP signaling capture and analysis with a traffic analyzer
    such as Wireshark.
+8. **Media path:** PJSIP endpoints configured with `direct_media=no`, so RTP
+   passes the PBX and can be captured there (Asterisk's default is `yes`).
 
 #### Functional requirements
 
@@ -257,12 +259,12 @@ compares the observed messages with the messages defined in the RFCs
 
    ```bash
    tshark -r <test-id>.pcapng -Y sip -T fields \
-     -E header=y -E separator=/t -E occurrence=a -E aggregator=';' \
+     -E header=y -E separator=/t -E occurrence=a -E 'aggregator=|' \
      -e frame.number -e frame.time_relative -e ip.src -e ip.dst \
      -e sip.Method -e sip.Status-Code -e sip.r-uri \
      -e sip.from.user -e sip.from.tag -e sip.to.user -e sip.to.tag \
      -e sip.Call-ID -e sip.CSeq.seq -e sip.CSeq.method -e sip.Via.branch \
-     -e sip.Expires -e sip.auth.username -e sip.auth.algorithm -e sip.User-Agent \
+     -e sip.Expires -e sip.Contact -e sip.auth.username -e sip.auth.algorithm -e sip.User-Agent \
      -e sdp.connection_info.address -e sdp.media.media \
      -e sdp.media.port -e sdp.media.format \
      > <test-id>.evidence.tsv
@@ -281,12 +283,14 @@ compares the observed messages with the messages defined in the RFCs
 
    ```bash
    python3 siplab/tools/validate_evidence.py --evidence <test-id>.evidence.tsv \
-     --report <test-id>.report.json [--truth <test-id>.truth.yaml]
+     --report deliverables/tests/<test-id>/report-claude.json [--truth <test-id>.truth.yaml]
    ```
 
    It checks the schema, that every cited frame, field, and value exists in
    the table (worksheet U4, G4), that the overall verdict follows the
    verdict rule (G3), and — with `--truth` — the result against the ground truth.
+   A truth mismatch is a warning: `RESULT PASS` means well-formed and grounded,
+   not correct; `--strict-truth` turns mismatches into errors.
 6. **Review.** The group compares the report with the original capture and
    the ground truth and records whether the diagnosis was correct.
 
@@ -334,8 +338,8 @@ reject it. Conflicting findings are listed, never resolved silently.
 | `approve` / `a` | Approve the current plan; start dispatching. |
 | `revise <text>` / `r <text>` | Re-PLAN with the feedback. |
 | `abort` / `x` | Discard the current test; wait for a new test message. |
-| `next` / `n` | Check the last skill reply; continue with the next dispatch or the REPORT. |
-| `dispatch <N>` | Dispatch skill `#N` next. |
+| `next` / `n` | Check the last skill reply; continue with the next dispatch or the REPORT. With no skill reply since the DISPATCH, the skill becomes a `not_pasted` gap; after a failed check, a second `next` records an `invalid_finding` gap. |
+| `dispatch <N>` | Dispatch skill `#N` next; a skill not in the plan is appended to it, and a repeated dispatch replaces the skill's earlier finding. |
 | `status` | Show the plan, the skills that returned, and the pending ones. |
 | `report` | Produce the REPORT now; pending skills become gaps. |
 | `schema` | Print the shared finding contract. |
@@ -353,13 +357,13 @@ Every skill prompt must:
 
 | Key | Content |
 | --- | --- |
-| `skill` | Catalogue number and short name, e.g. `"02-call-flow"`. |
+| `skill` | The skill id — the folder name of its prompt file, e.g. `"02-call-flow"`. |
 | `test_id` | The `test_id` of the analyzed test case. |
 | `summary` | One sentence: what the skill concluded. |
-| `verdict` | `pass` — the SIP procedure in the skill's scope completed successfully; `fail` — it did not; `insufficient_evidence` — the table cannot decide. |
+| `verdict` | `pass` \| `fail` \| `insufficient_evidence` — for procedure skills, whether the SIP procedure in scope completed; assessment skills #8 and #9 never return `fail`, and #7 only for a violated security expectation (boot Block 2). |
 | `failure_stage` | `none` (exactly with `pass`) \| `transport` \| `registration` \| `authentication` \| `routing` \| `call_setup` \| `media_negotiation` \| `media_path` \| `teardown` \| `messaging` \| `unknown`. |
 | `confidence` | Number in [0, 1]. |
-| `evidence` | Array of `{frame, field, value}` copied from the evidence table — observations only, no interpretation. |
+| `evidence` | Array of frame items `{frame, field, value}` from the evidence table, or stream items `{stream, field, value}` from the RTP STREAMS block — observations only; at least one for `pass` or `fail`. |
 | `rfc_ref` | Array of specification references, e.g. `"RFC 3261 §13.2.2.4"`. |
 | `next_check` | One suggested manual check, or `null`. Never an automatic action. |
 | `rationale` | Observations, then the expected behavior, then any cause labeled `Suspected cause:`. |
@@ -409,6 +413,9 @@ text below the closing `---` of the frontmatter — is pasted into the chat.
 
 #### Repository layout (provided by the instructor)
 
+In the documents, paths without a top-level folder — such as `boot/boot.md`,
+`tools/…`, or `skills/…` — are relative to `siplab/`.
+
 The repository has three top-level folders, one per question:
 
 ```text
@@ -453,11 +460,15 @@ repository (§ 3.8):
 
 ```text
 deliverables/
-├── pbx/            # Sanitized configuration extracts (e.g. pjsip.conf, extensions.conf)
-├── corpus/         # <test-id>.test.yaml, .truth.yaml, sanitized .pcapng, .evidence.tsv
-├── tests/          # Per test: transcripts, saved reports, validator output
-├── spec.md         # One-page specification per skill the group implements
-├── worksheet.md    # Filled test worksheet (copied from docs/project-proposal/)
+├── README.md       # What goes where
+├── pbx/            # Sanitized configuration, setup notes, diagram, inventory, registration evidence (P1)
+├── core-tests.md   # Core test table and signaling walkthroughs (P2)
+├── corpus/         # <test-id>.test.yaml, .truth.yaml, sanitized .pcapng, .evidence.tsv (P2)
+├── spec.md         # One page per skill the group implements, with review responses (P2–P3)
+├── onboarding/     # Readiness transcripts per member and environment (§ 3.7)
+├── governance/     # Linter output and skill-reviewer reviews per skill (§ 4.1)
+├── tests/          # Per test: transcripts, saved reports, validator output (P3)
+├── worksheet.md    # Created by copying docs/project-proposal/test-worksheet.md
 └── report.md       # The group report (§ 5.1)
 ```
 
@@ -489,13 +500,13 @@ This paste-driven flow uses only **chat as runtime** — no MCP, no
 
 | Environment | Wrapper | Effect |
 | --- | --- | --- |
-| Claude Code | `/siplab-init` (`.claude/commands/`, also a skill in `.claude/skills/`) | Loads orchestrator, boot payload, and catalogue |
+| Claude Code | `/siplab-init` (skill in `.claude/skills/`) | Loads orchestrator, boot payload, and catalogue |
 | Claude Code | `/siplab-catalogue` | Re-registers the catalogue, e.g. after a status change |
 | Claude Code | `/siplab-skill <N>` | Prints a skill body verbatim for dispatch |
 | Claude Code | `/siplab-test <scenario or corpus test>` | Builds the test message — never includes a truth file |
-| Claude Code | `/siplab-governance <SKILL.md>` (also a skill) | Runs the linter, then the skill reviewer (§ 4.1) |
+| Claude Code | `/siplab-governance <SKILL.md>` | Runs the linter, then the skill reviewer (§ 4.1) |
 | Copilot Chat | `.github/prompts/siplab-*.prompt.md` | The same five helpers as prompt files |
-| Copilot Chat | `.github/agents/siplab-orchestrator.agent.md`, `.github/chatmodes/…` | Starts a chat as the orchestrator |
+| Copilot Chat | `.github/agents/siplab-orchestrator.agent.md` | Starts a chat as the orchestrator |
 | Copilot Chat | `.github/agents/siplab-governance.agent.md` | Starts a chat as the skill reviewer |
 | Copilot Chat | `.github/copilot-instructions.md` | Workspace rules |
 
@@ -515,7 +526,7 @@ bring-up runs is set in [`delivery-plan.md`](./delivery-plan.md).
 2. **Install Wireshark with TShark** and confirm `tshark -v` runs; install
    Python 3.8 or later with the `jsonschema` and `PyYAML` packages for the
    validator.
-3. **Clone the project repository** and confirm `siplab/` is visible.
+3. **Clone your group's repository** (§ 3.8) and confirm `siplab/` is visible.
 4. **Verify the start-up sequence in Claude Code.** Paste the three bodies
    (or run `/siplab-init`). The replies must be, in order:
    *"SIP Test Engineer orchestrator loaded — waiting for boot."*,
@@ -529,7 +540,7 @@ bring-up runs is set in [`delivery-plan.md`](./delivery-plan.md).
    correct, coverage-honest result while #2 is a placeholder. Run the
    validator on each report and save the transcripts.
 
-### 3.8 Team repositories
+### 3.8 Group repositories
 
 `edu-siplab` is the instructor's reference and skeleton: only the instructor
 changes it. Each group works in its **own private copy** of it, created at
@@ -632,7 +643,9 @@ complete worked example is
 
 Two tiers check a skill before a group submits it (PROMPTARCH APR-010).
 Both are advisory: they complement the test worksheet and never replace it
-or grade.
+or grade. Running them is a submission precondition: before a group submits
+a skill, the linter reports no errors and every reviewer `FAIL` is either
+fixed or answered in `spec.md`; both outputs go to `deliverables/governance/`.
 
 | Tier | Tool | Checks |
 | --- | --- | --- |
@@ -716,7 +729,7 @@ graded per variant is in [`delivery-plan.md`](./delivery-plan.md).
 
 ### 6.1 Evaluating the AI SIP Test Engineer
 
-Run every case in the group corpus and the held-out corpus and report:
+Run every case of the group corpus in both environments and report:
 
 - **Input coverage** — share of cases the pipeline can extract and the
   orchestrator can associate with a test case.
@@ -730,6 +743,12 @@ Run every case in the group corpus and the held-out corpus and report:
   no irrelevant ones.
 - **Effort** — time to diagnose selected cases with the AI SIP Test Engineer
   versus Wireshark's *Telephony → SIP Flows / VoIP Calls* alone.
+
+**Held-out corpus.** The instructor releases its test cases and evidence
+tables, never the truth files. Groups run every held-out case in both
+environments and submit the reports under `deliverables/tests/`; the
+instructor scores them with `validate_evidence.py --truth` after submission.
+These held-out results count towards D6.
 
 Disclose the number and type of cases. Discuss every incorrect diagnosis.
 Do not claim general protocol correctness from a small lab corpus.
@@ -774,7 +793,8 @@ are in [`test-worksheet.md`](./test-worksheet.md).
 1. Every group authors **#2 Call Setup & Teardown**.
 2. In addition, a group authors **one elective per member beyond the
    first**: a group of 3 authors #2 plus two electives; a group of 2 authors
-   #2 plus one elective. (The 3-week variant reduces this; see
+   #2 plus one elective. (The 3-week variant asks for #2 plus at most one
+   elective; see
    [`delivery-plan.md`](./delivery-plan.md).)
 3. An advanced skill (#9, #10) may replace an elective. #10 requires RTP in
    the captures.
@@ -821,30 +841,39 @@ services, and test tools you actually use, with access dates.
 - [7] J. Rosenberg and H. Schulzrinne, "An Extension to the Session Initiation Protocol (SIP) for Symmetric Response Routing," IETF RFC 3581, August 2003. <https://www.rfc-editor.org/rfc/rfc3581> (skill #5)
 - [8] H. Schulzrinne, D. Oran, and G. Camarillo, "The Reason Header Field for the Session Initiation Protocol (SIP)," IETF RFC 3326, December 2002. <https://www.rfc-editor.org/rfc/rfc3326> (skill #8)
 - [9] G. Camarillo et al., "Integrated Services Digital Network (ISDN) User Part (ISUP) to Session Initiation Protocol (SIP) Mapping," IETF RFC 3398, December 2002. <https://www.rfc-editor.org/rfc/rfc3398> (skill #8)
-- [10] ITU-T Recommendation Q.850, "Usage of cause and location in the Digital Subscriber Signalling System No. 1 and the Signalling System No. 7 ISDN user part." (skill #8)
-- [11] 3GPP TS 24.229, "IP multimedia call control protocol based on SIP and SDP; Stage 3." (skill #9)
-- [12] IETF, SIP working group documents. <https://datatracker.ietf.org/wg/sip/documents/>
+- [10] ITU-T Recommendation Q.850 (05/1998), "Usage of cause and location in the Digital Subscriber Signalling System No. 1 and the Signalling System No. 7 ISDN user part." (skill #8)
+- [11] 3GPP TS 24.229, "IP multimedia call control protocol based on SIP and SDP; Stage 3." Cite the release you use. (skill #9)
+- [12] 3GPP TS 33.203, "3G security; Access security for IP-based services." Cite the release you use. (skill #9)
+- [13] J. Rosenberg and H. Schulzrinne, "Reliability of Provisional Responses in the Session Initiation Protocol (SIP)," IETF RFC 3262, June 2002. <https://www.rfc-editor.org/rfc/rfc3262> (skill #3)
+- [14] A. Niemi, J. Arkko, and V. Torvinen, "Hypertext Transfer Protocol (HTTP) Digest Authentication Using Authentication and Key Agreement (AKA)," IETF RFC 3310, September 2002. <https://www.rfc-editor.org/rfc/rfc3310> (skill #9)
+- [15] C. Jennings, J. Peterson, and M. Watson, "Private Extensions to the Session Initiation Protocol (SIP) for Asserted Identity within Trusted Networks," IETF RFC 3325, November 2002. <https://www.rfc-editor.org/rfc/rfc3325> (skill #9)
+- [16] D. Willis and B. Hoeneisen, "Session Initiation Protocol (SIP) Extension Header Field for Registering Non-Adjacent Contacts," IETF RFC 3327, December 2002. <https://www.rfc-editor.org/rfc/rfc3327> (skill #9)
+- [17] H. Schulzrinne and S. Casner, "RTP Profile for Audio and Video Conferences with Minimal Control," IETF RFC 3551, July 2003. <https://www.rfc-editor.org/rfc/rfc3551> (skill #10)
+- [18] D. Willis and B. Hoeneisen, "Session Initiation Protocol (SIP) Extension Header Field for Service Route Discovery During Registration," IETF RFC 3608, October 2003. <https://www.rfc-editor.org/rfc/rfc3608> (skill #9)
+- [19] R. Shekh-Yusef, "The Session Initiation Protocol (SIP) Digest Access Authentication Scheme," IETF RFC 8760, March 2020. <https://www.rfc-editor.org/rfc/rfc8760> (skill #7)
+- [20] Y. Rekhter et al., "Address Allocation for Private Internets," IETF RFC 1918 (BCP 5), February 1996. <https://www.rfc-editor.org/rfc/rfc1918> (skill #5)
+- [21] IETF, SIP working group documents. <https://datatracker.ietf.org/wg/sip/documents/>
 
 ### PBX, clients, and lab tools
 
-- [13] Asterisk Project, *Getting Started* and *Basic PBX Functionality*. <https://docs.asterisk.org/>
-- [14] Belledonne Communications, *Linphone documentation*. <https://www.linphone.org/>
-- [15] Blink SIP client. <https://icanblink.com/>
-- [16] Wireshark Foundation, *Wireshark User's Guide* and *TShark manual*. <https://www.wireshark.org/docs/>
-- [17] Canonical, *Ubuntu documentation*. <https://help.ubuntu.com/>
-- [18] Oracle, *VirtualBox documentation*. <https://www.virtualbox.org/wiki/Documentation>
-- [19] SIPp. <https://sipp.readthedocs.io/> (optional — for generating additional test traffic in the lab, not used by the AI)
+- [22] Asterisk Project, *Getting Started* and *Basic PBX Functionality*. <https://docs.asterisk.org/>
+- [23] Belledonne Communications, *Linphone documentation*. <https://www.linphone.org/>
+- [24] Blink SIP client. <https://icanblink.com/>
+- [25] Wireshark Foundation, *Wireshark User's Guide* and *TShark manual*. <https://www.wireshark.org/docs/>
+- [26] Canonical, *Ubuntu documentation*. <https://help.ubuntu.com/>
+- [27] Oracle, *VirtualBox documentation*. <https://www.virtualbox.org/wiki/Documentation>
+- [28] SIPp. <https://sipp.readthedocs.io/> (optional — for generating additional test traffic in the lab, not used by the AI)
 
 ### AI, prompting, and safety
 
-- [20] OWASP, *Top 10 for Large Language Model Applications*. <https://owasp.org/www-project-top-10-for-large-language-model-applications/>
-- [21] S. Willison, *Prompt injection: What's the worst that can happen?*
-- [22] Anthropic, *Prompt engineering overview* and *Claude Code documentation*.
-- [23] GitHub, *GitHub Copilot Chat documentation*.
-- [24] Promptware Works, *EDU-AISOC* — the companion project whose structure SIPLab follows. <https://github.com/promptware-works/edu-aisoc>
-- [25] Promptware Works, *PROMPTARCH* — Architectural Principle Records for promptware, in particular APR-001 ASPECT (agent and skill specifications), APR-005 (trust boundaries), APR-014 DECLARE (frontmatter contract), and APR-024 (coverage-honest verdicts). <https://github.com/promptware-works/promptarch>
+- [29] OWASP, *Top 10 for Large Language Model Applications*. <https://owasp.org/www-project-top-10-for-large-language-model-applications/>
+- [30] S. Willison, *Prompt injection: What's the worst that can happen?*
+- [31] Anthropic, *Prompt engineering overview* and *Claude Code documentation*.
+- [32] GitHub, *GitHub Copilot Chat documentation*.
+- [33] Promptware Works, *EDU-AISOC* — the companion project whose structure SIPLab follows. <https://github.com/promptware-works/edu-aisoc>
+- [34] Promptware Works, *PROMPTARCH* — Architectural Principle Records for promptware, in particular APR-001 ASPECT (agent and skill specifications), APR-005 (trust boundaries), APR-014 DECLARE (frontmatter contract), and APR-024 (coverage-honest verdicts). <https://github.com/promptware-works/promptarch>
 
 ### Background and further reading
 
-- [26] Silicon Press, "What is an IP PBX?" <http://www.silicon-press.com/briefs/brief.ippbx/>
-- [27] S. Yao et al., "ReAct: Synergizing Reasoning and Acting in Language Models," ICLR 2023.
+- [35] Silicon Press, "What is an IP PBX?" <http://www.silicon-press.com/briefs/brief.ippbx/>
+- [36] S. Yao et al., "ReAct: Synergizing Reasoning and Acting in Language Models," ICLR 2023.

@@ -1,5 +1,5 @@
 ---
-mode: ask
+agent: ask
 description: Re-register the SIPLab skill catalogue in a running session
 ---
 

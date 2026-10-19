@@ -1,6 +1,6 @@
 ---
 name: siplab-skill-05-nat-media-path
-description: SIPLab protocol skill #5, NAT & Media Path — PLACEHOLDER. Returns a fixed placeholder finding until a group implements it. Emits the shared 10-key finding plus `media_endpoints`, `nat_indicators` once implemented. Paste the body when the orchestrator dispatches skill #5.
+description: "SIPLab protocol skill #5, NAT & Media Path — PLACEHOLDER. Returns a fixed placeholder finding until a group implements it. Emits the shared 10-key finding plus `media_endpoints`, `nat_indicators` once implemented. Paste the body when the orchestrator dispatches skill #5."
 user-invocable: false
 metadata:
   core:
@@ -86,7 +86,7 @@ Decide whether the media path of a call can work in both directions, from the ad
 ### When NOT to Use
 
 - Judging codec negotiation → #3
-- Judging RTP loss, jitter, or quality → #10
+- Judging whether RTP flowed in each direction, or its loss and jitter → #10
 - Judging whether the call was answered or ended → #2
 
 > TODO — check both lists against your Procedure; add cases you discover.
@@ -106,8 +106,8 @@ Before producing any output, confirm in this conversation:
 
 **HALT-on-failure**: if item 1, 2, or 3 fails, reply only with
 `{"error": "<missing item>", "resolution": "<what the operator must paste>"}`.
-If item 4 fails, return a finding with verdict `insufficient_evidence` that
-names the missing inputs. Never proceed from training knowledge alone.
+If item 4 fails, return a finding with verdict `insufficient_evidence`,
+failure stage `unknown`, and the missing inputs named in `rationale`. Never proceed from training knowledge alone.
 
 ---
 
@@ -141,9 +141,9 @@ names the missing inputs. Never proceed from training knowledge alone.
 > **Hints for the authors** — delete when done.
 >
 > - An SDP `c=` address in a private range (RFC 1918) that differs from the packet source address is a suspected one-way-audio cause — label it as suspected.
-> - `received` and `rport` in `Via` record the address and port the server saw (RFC 3581).
-> - Without RTP evidence, the media path itself is `insufficient_evidence`.
-> - RTP in one direction only is a media-path failure.
+> - `received` (RFC 3261 §18.2.1) and `rport` (RFC 3581) in `Via` record the address and port the server saw.
+> - With `direct_media=yes`, Asterisk re-INVITEs the phones so media bypasses the PBX; compare the addresses in those re-INVITEs too.
+> - Whether RTP flowed in each direction is judged by #10; this skill explains from the addressing why media cannot flow. Without addressing evidence, return `insufficient_evidence`.
 
 1. TODO — select the rows this skill judges.
 2. TODO — group them (Call-ID, CSeq, branch, user, stream).
@@ -169,9 +169,10 @@ names the missing inputs. Never proceed from training knowledge alone.
 Produces one JSON object per `schema/finding.schema.json` and no prose outside it.
 
 - `skill` — `"05-nat-media-path"`.
-- `evidence[]` — the frames that decide the verdict, copied exactly.
+- `evidence[]` — the frame items that decide the verdict, copied exactly.
 - `rfc_ref` — the sections your Procedure applies. Starting points:
 
+> - RFC 3261 §18.2.1 (received)
 > - RFC 3581 (symmetric response routing)
 > - RFC 1918 (private address space)
 > - RFC 3264 §6 (answer addresses)
@@ -206,7 +207,7 @@ Produces one JSON object per `schema/finding.schema.json` and no prose outside i
 | Shared keys present | all 10, plus `media_endpoints`, `nat_indicators` | Add the missing keys before replying |
 | Evidence exists in the table | 100 % of items | Remove or correct the item |
 | `failure_stage` consistent with `verdict` | `none` iff `pass` | Correct the stage |
-| Decisive frames cited | ≥ 1 for `pass` / `fail` | Cite them, or return `insufficient_evidence` |
+| Decisive items cited | ≥ 1 for `pass` / `fail` | Cite them, or return `insufficient_evidence` |
 | Worksheet section F5 | every check passes in both environments | Revise the Procedure |
 | TODO — a skill-specific gate | TODO | TODO |
 

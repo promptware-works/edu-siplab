@@ -1,6 +1,6 @@
 ---
 name: siplab-skill-09-ims-comparison
-description: SIPLab protocol skill #9, IMS Comparison — PLACEHOLDER. Returns a fixed placeholder finding until a group implements it. Emits the shared 10-key finding plus `ims_differences` once implemented. Paste the body when the orchestrator dispatches skill #9.
+description: "SIPLab protocol skill #9, IMS Comparison — PLACEHOLDER. Returns a fixed placeholder finding until a group implements it. Emits the shared 10-key finding plus `ims_differences` once implemented. Paste the body when the orchestrator dispatches skill #9."
 user-invocable: false
 metadata:
   core:
@@ -106,8 +106,8 @@ Before producing any output, confirm in this conversation:
 
 **HALT-on-failure**: if item 1, 2, or 3 fails, reply only with
 `{"error": "<missing item>", "resolution": "<what the operator must paste>"}`.
-If item 4 fails, return a finding with verdict `insufficient_evidence` that
-names the missing inputs. Never proceed from training knowledge alone.
+If item 4 fails, return a finding with verdict `insufficient_evidence`,
+failure stage `unknown`, and the missing inputs named in `rationale`. Never proceed from training knowledge alone.
 
 ---
 
@@ -138,9 +138,10 @@ names the missing inputs. Never proceed from training knowledge alone.
 
 > **Hints for the authors** — delete when done.
 >
-> - IMS registration passes P-CSCF → I-CSCF → S-CSCF and uses IMS AKA rather than plain digest.
+> - IMS registration passes P-CSCF → I-CSCF → S-CSCF and normally uses IMS AKA (3GPP TS 33.203; Digest AKAv1-MD5, RFC 3310) rather than plain digest.
+> - Verdict (boot Block 2): `pass` when the capture contains the flows needed for the comparison, `insufficient_evidence` otherwise; this skill never returns `fail`.
 > - List IMS-relevant headers that are absent, e.g. `P-Asserted-Identity`, `Path`, `Service-Route`.
-> - Cite 3GPP TS 24.229 for every IMS statement; never claim compliance.
+> - Cite 3GPP TS 24.229 (or TS 33.203 and RFC 3327/3608/3325 where they apply) for every IMS statement; never claim compliance.
 
 1. TODO — select the rows this skill judges.
 2. TODO — group them (Call-ID, CSeq, branch, user, stream).
@@ -151,13 +152,13 @@ names the missing inputs. Never proceed from training knowledge alone.
 
 **Verdict table**
 
-> Failure stages this skill normally uses: `registration`, `call_setup`, `unknown`.
+> Failure stages this skill normally uses: `unknown` with `insufficient_evidence` only — this skill never returns `fail`.
 
 | Condition (first match wins) | `verdict` | `failure_stage` |
 | --- | --- | --- |
-| TODO — the inputs needed for a decision are absent | `insufficient_evidence` | `unknown` |
-| TODO | `fail` | TODO |
-| TODO | `pass` | `none` |
+| TODO — the inputs needed for the assessment are absent | `insufficient_evidence` | `unknown` |
+| TODO — a case in scope cannot be assessed | `insufficient_evidence` | `unknown` |
+| TODO — every case in scope was assessed | `pass` | `none` |
 
 ---
 
@@ -166,10 +167,12 @@ names the missing inputs. Never proceed from training knowledge alone.
 Produces one JSON object per `schema/finding.schema.json` and no prose outside it.
 
 - `skill` — `"09-ims-comparison"`.
-- `evidence[]` — the frames that decide the verdict, copied exactly.
+- `evidence[]` — the frame items that decide the verdict, copied exactly.
 - `rfc_ref` — the sections your Procedure applies. Starting points:
 
 > - 3GPP TS 24.229
+> - 3GPP TS 33.203 (IMS AKA)
+> - RFC 3310 (Digest AKA)
 > - RFC 3327 (Path)
 > - RFC 3608 (Service-Route)
 > - RFC 3325 (P-Asserted-Identity)
@@ -201,7 +204,7 @@ Produces one JSON object per `schema/finding.schema.json` and no prose outside i
 | Shared keys present | all 10, plus `ims_differences` | Add the missing keys before replying |
 | Evidence exists in the table | 100 % of items | Remove or correct the item |
 | `failure_stage` consistent with `verdict` | `none` iff `pass` | Correct the stage |
-| Decisive frames cited | ≥ 1 for `pass` / `fail` | Cite them, or return `insufficient_evidence` |
+| Decisive items cited | ≥ 1 for `pass` / `fail` | Cite them, or return `insufficient_evidence` |
 | Worksheet section F9 | every check passes in both environments | Revise the Procedure |
 | TODO — a skill-specific gate | TODO | TODO |
 

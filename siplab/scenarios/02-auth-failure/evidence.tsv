@@ -1,9 +1,9 @@
-frame.number	frame.time_relative	ip.src	ip.dst	sip.Method	sip.Status-Code	sip.r-uri	sip.from.user	sip.from.tag	sip.to.user	sip.to.tag	sip.Call-ID	sip.CSeq.seq	sip.CSeq.method	sip.Via.branch	sip.Expires	sip.auth.username	sip.auth.algorithm	sip.User-Agent	sdp.connection_info.address	sdp.media.media	sdp.media.port	sdp.media.format
-1	0.000000000	192.168.56.22	192.168.56.10	REGISTER		sip:192.168.56.10	1002	bR7kq1	1002		8bq2Wf4kLm	51	REGISTER	z9hG4bK.Lq3eV0	3600			Linphone-Android/5.2.5 (Pixel 7) LinphoneSDK/5.3.72				
-2	0.003000000	192.168.56.10	192.168.56.22		401		1002	bR7kq1	1002	6a4f0c2e	8bq2Wf4kLm	51	REGISTER	z9hG4bK.Lq3eV0			MD5					
-3	0.047000000	192.168.56.22	192.168.56.10	REGISTER		sip:192.168.56.10	1002	bR7kq1	1002		8bq2Wf4kLm	52	REGISTER	z9hG4bK.Mr8tW2	3600	1002	MD5	Linphone-Android/5.2.5 (Pixel 7) LinphoneSDK/5.3.72				
-4	0.051000000	192.168.56.10	192.168.56.22		200		1002	bR7kq1	1002	9c1d77b0	8bq2Wf4kLm	52	REGISTER	z9hG4bK.Mr8tW2	3600							
-5	3.210000000	192.168.56.21	192.168.56.10	REGISTER		sip:192.168.56.10	1001	aR2mz7	1001		Qx81vN3pTa	20	REGISTER	z9hG4bK.Pn5yH1	3600			Linphone-Desktop/5.2.6 (macOS) LinphoneSDK/5.3.72				
-6	3.213000000	192.168.56.10	192.168.56.21		401		1001	aR2mz7	1001	e21b9a04	Qx81vN3pTa	20	REGISTER	z9hG4bK.Pn5yH1			MD5					
-7	3.257000000	192.168.56.21	192.168.56.10	REGISTER		sip:192.168.56.10	1001	aR2mz7	1001		Qx81vN3pTa	21	REGISTER	z9hG4bK.Pn5yH2	3600	1001	MD5	Linphone-Desktop/5.2.6 (macOS) LinphoneSDK/5.3.72				
-8	3.261000000	192.168.56.10	192.168.56.21		401		1001	aR2mz7	1001	c77f0d13	Qx81vN3pTa	21	REGISTER	z9hG4bK.Pn5yH2			MD5					
+frame.number	frame.time_relative	ip.src	ip.dst	sip.Method	sip.Status-Code	sip.r-uri	sip.from.user	sip.from.tag	sip.to.user	sip.to.tag	sip.Call-ID	sip.CSeq.seq	sip.CSeq.method	sip.Via.branch	sip.Expires	sip.Contact	sip.auth.username	sip.auth.algorithm	sip.User-Agent	sdp.connection_info.address	sdp.media.media	sdp.media.port	sdp.media.format
+1	0.000000000	192.168.56.22	192.168.56.10	REGISTER		sip:192.168.56.10	1002	bR7kq1	1002		8bq2Wf4kLm	51	REGISTER	z9hG4bK.Lq3eV0	3600	<sip:1002@192.168.56.22:5060;transport=udp>			Linphone-Android/5.2.5 (Pixel 7) LinphoneSDK/5.3.72				
+2	0.003000000	192.168.56.10	192.168.56.22		401		1002	bR7kq1	1002	z9hG4bK.Lq3eV0	8bq2Wf4kLm	51	REGISTER	z9hG4bK.Lq3eV0				MD5					
+3	0.047000000	192.168.56.22	192.168.56.10	REGISTER		sip:192.168.56.10	1002	bR7kq1	1002		8bq2Wf4kLm	52	REGISTER	z9hG4bK.Mr8tW2	3600	<sip:1002@192.168.56.22:5060;transport=udp>	1002	MD5	Linphone-Android/5.2.5 (Pixel 7) LinphoneSDK/5.3.72				
+4	0.051000000	192.168.56.10	192.168.56.22		200		1002	bR7kq1	1002	z9hG4bK.Mr8tW2	8bq2Wf4kLm	52	REGISTER	z9hG4bK.Mr8tW2	3600	<sip:1002@192.168.56.22:5060;transport=udp>;expires=3600							
+5	3.210000000	192.168.56.21	192.168.56.10	REGISTER		sip:192.168.56.10	1001	aR2mz7	1001		Qx81vN3pTa	20	REGISTER	z9hG4bK.Pn5yH1	3600	<sip:1001@192.168.56.21:5060;transport=udp>			Linphone-Desktop/5.2.6 (macOS) LinphoneSDK/5.3.72				
+6	3.213000000	192.168.56.10	192.168.56.21		401		1001	aR2mz7	1001	z9hG4bK.Pn5yH1	Qx81vN3pTa	20	REGISTER	z9hG4bK.Pn5yH1				MD5					
+7	3.257000000	192.168.56.21	192.168.56.10	REGISTER		sip:192.168.56.10	1001	aR2mz7	1001		Qx81vN3pTa	21	REGISTER	z9hG4bK.Pn5yH2	3600	<sip:1001@192.168.56.21:5060;transport=udp>	1001	MD5	Linphone-Desktop/5.2.6 (macOS) LinphoneSDK/5.3.72				
+8	3.261000000	192.168.56.10	192.168.56.21		401		1001	aR2mz7	1001	z9hG4bK.Pn5yH2	Qx81vN3pTa	21	REGISTER	z9hG4bK.Pn5yH2				MD5					

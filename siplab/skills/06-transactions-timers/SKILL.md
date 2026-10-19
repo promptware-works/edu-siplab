@@ -1,6 +1,6 @@
 ---
 name: siplab-skill-06-transactions-timers
-description: SIPLab protocol skill #6, Transactions, Dialogs & Timers — PLACEHOLDER. Returns a fixed placeholder finding until a group implements it. Emits the shared 10-key finding plus `transactions`, `timing` once implemented. Paste the body when the orchestrator dispatches skill #6.
+description: "SIPLab protocol skill #6, Transactions, Dialogs & Timers — PLACEHOLDER. Returns a fixed placeholder finding until a group implements it. Emits the shared 10-key finding plus `transactions`, `timing` once implemented. Paste the body when the orchestrator dispatches skill #6."
 user-invocable: false
 metadata:
   core:
@@ -106,8 +106,8 @@ Before producing any output, confirm in this conversation:
 
 **HALT-on-failure**: if item 1, 2, or 3 fails, reply only with
 `{"error": "<missing item>", "resolution": "<what the operator must paste>"}`.
-If item 4 fails, return a finding with verdict `insufficient_evidence` that
-names the missing inputs. Never proceed from training knowledge alone.
+If item 4 fails, return a finding with verdict `insufficient_evidence`,
+failure stage `unknown`, and the missing inputs named in `rationale`. Never proceed from training knowledge alone.
 
 ---
 
@@ -142,7 +142,7 @@ names the missing inputs. Never proceed from training knowledge alone.
 
 > **Hints for the authors** — delete when done.
 >
-> - A transaction is identified by the top `Via` branch and the CSeq method; a dialog by Call-ID, From tag, and To tag.
+> - A transaction is identified by the top `Via` branch and the CSeq method — except that the ACK for a non-2xx final response and a CANCEL reuse the INVITE's branch and belong with that INVITE transaction (RFC 3261 §17.1.3, §9.1). A dialog is identified by Call-ID, From tag, and To tag.
 > - Repeated requests with the same branch are retransmissions; over UDP, INVITE retransmissions double from T1 = 500 ms.
 > - INVITE retransmissions ending in `408` or in silence after about 32 s indicate Timer B expiry.
 > - An in-dialog request whose CSeq is lower than the previous one in the same direction is out of order.
@@ -171,11 +171,12 @@ names the missing inputs. Never proceed from training knowledge alone.
 Produces one JSON object per `schema/finding.schema.json` and no prose outside it.
 
 - `skill` — `"06-transactions-timers"`.
-- `evidence[]` — the frames that decide the verdict, copied exactly.
+- `evidence[]` — the frame items that decide the verdict, copied exactly.
 - `rfc_ref` — the sections your Procedure applies. Starting points:
 
 > - RFC 3261 §17 (transactions)
 > - RFC 3261 §17.1.1.2 (INVITE timers A and B)
+> - RFC 3261 §17.1.3 (matching responses to client transactions)
 > - RFC 3261 §12 (dialogs)
 > - RFC 3261 §8.1.1.5 (CSeq)
 
@@ -208,7 +209,7 @@ Produces one JSON object per `schema/finding.schema.json` and no prose outside i
 | Shared keys present | all 10, plus `transactions`, `timing` | Add the missing keys before replying |
 | Evidence exists in the table | 100 % of items | Remove or correct the item |
 | `failure_stage` consistent with `verdict` | `none` iff `pass` | Correct the stage |
-| Decisive frames cited | ≥ 1 for `pass` / `fail` | Cite them, or return `insufficient_evidence` |
+| Decisive items cited | ≥ 1 for `pass` / `fail` | Cite them, or return `insufficient_evidence` |
 | Worksheet section F6 | every check passes in both environments | Revise the Procedure |
 | TODO — a skill-specific gate | TODO | TODO |
 

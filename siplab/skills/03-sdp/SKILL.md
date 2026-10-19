@@ -1,6 +1,6 @@
 ---
 name: siplab-skill-03-sdp
-description: SIPLab protocol skill #3, SDP Offer/Answer — PLACEHOLDER. Returns a fixed placeholder finding until a group implements it. Emits the shared 10-key finding plus `negotiations`, `common_codecs` once implemented. Paste the body when the orchestrator dispatches skill #3.
+description: "SIPLab protocol skill #3, SDP Offer/Answer — PLACEHOLDER. Returns a fixed placeholder finding until a group implements it. Emits the shared 10-key finding plus `negotiations`, `common_codecs` once implemented. Paste the body when the orchestrator dispatches skill #3."
 user-invocable: false
 metadata:
   core:
@@ -106,8 +106,8 @@ Before producing any output, confirm in this conversation:
 
 **HALT-on-failure**: if item 1, 2, or 3 fails, reply only with
 `{"error": "<missing item>", "resolution": "<what the operator must paste>"}`.
-If item 4 fails, return a finding with verdict `insufficient_evidence` that
-names the missing inputs. Never proceed from training knowledge alone.
+If item 4 fails, return a finding with verdict `insufficient_evidence`,
+failure stage `unknown`, and the missing inputs named in `rationale`. Never proceed from training knowledge alone.
 
 ---
 
@@ -141,10 +141,11 @@ names the missing inputs. Never proceed from training knowledge alone.
 
 > **Hints for the authors** — delete when done.
 >
-> - The offer is in the INVITE; if the INVITE has no SDP (late offer), the offer is in the `200` and the answer in the ACK.
+> - The offer is in the INVITE and the answer in the first 18x or 2xx that carries SDP (RFC 3261 §13.2.1); if the INVITE has no SDP (late offer), the offer is in the 2xx and the answer in the ACK.
 > - The common codecs are the formats present in both the offer and the answer of the same leg.
 > - A media port of `0` in the answer rejects that stream (RFC 3264).
-> - `488 Not Acceptable Here` after an offer means the answerer accepted none of the offered media.
+> - `488 Not Acceptable Here` means the answerer could not accept the offered session description — e.g. no common codec, or an unsupported transport such as RTP/SAVP.
+> - With several `m=` lines, `sdp.media.media`, `sdp.media.port`, and `sdp.media.format` hold one `|`-separated occurrence per line, in the same order; pair them by position.
 > - Treat `DynamicRTP-Type-101` (telephone-event) as DTMF, not as an audio codec.
 
 1. TODO — select the rows this skill judges.
@@ -171,7 +172,7 @@ names the missing inputs. Never proceed from training knowledge alone.
 Produces one JSON object per `schema/finding.schema.json` and no prose outside it.
 
 - `skill` — `"03-sdp"`.
-- `evidence[]` — the frames that decide the verdict, copied exactly.
+- `evidence[]` — the frame items that decide the verdict, copied exactly.
 - `rfc_ref` — the sections your Procedure applies. Starting points:
 
 > - RFC 3264 §5 (generating the offer)
@@ -179,6 +180,7 @@ Produces one JSON object per `schema/finding.schema.json` and no prose outside i
 > - RFC 8866 §5.7 (connection data)
 > - RFC 8866 §5.14 (media descriptions)
 > - RFC 3261 §13.2.1 (offer and answer in INVITE transactions)
+> - RFC 3262 (reliable provisional responses)
 > - RFC 3261 §21.4.26 (488)
 
 - `negotiations` — TODO — one object per call leg: offer frame, answer frame, offered formats, answered formats, rejected streams.
@@ -210,7 +212,7 @@ Produces one JSON object per `schema/finding.schema.json` and no prose outside i
 | Shared keys present | all 10, plus `negotiations`, `common_codecs` | Add the missing keys before replying |
 | Evidence exists in the table | 100 % of items | Remove or correct the item |
 | `failure_stage` consistent with `verdict` | `none` iff `pass` | Correct the stage |
-| Decisive frames cited | ≥ 1 for `pass` / `fail` | Cite them, or return `insufficient_evidence` |
+| Decisive items cited | ≥ 1 for `pass` / `fail` | Cite them, or return `insufficient_evidence` |
 | Worksheet section F3 | every check passes in both environments | Revise the Procedure |
 | TODO — a skill-specific gate | TODO | TODO |
 

@@ -1,6 +1,7 @@
 ---
 name: siplab-governance
 description: Run this chat as the SIPLab skill reviewer — an advisory governance agent that checks a candidate protocol skill against the SIPLab criteria and proposes fixes. Never grades.
+tools: ['search/codebase']
 user-invocable: true
 ---
 

@@ -1,35 +1,35 @@
-# <Report title>
+# {Report title}
 
-**Group:** <group name>
-**Members:** <names>
+**Group:** {group name}\
+**Members:** {names}
 
 ## Abstract
 
 ## Keywords
 
 ## I. Introduction
-<motivation, goal and objectives, requirements, restrictions, outline>
+{motivation, goal and objectives, requirements, restrictions, outline}
 
 ## II. Basics & related work
-<SIP, SDP, RTP, IP-PBX; relation to PSTN/ISUP and IMS; orchestration, ASPECT, prompt injection>
+{SIP, SDP, RTP, IP-PBX; relation to PSTN/ISUP and IMS; orchestration, ASPECT, coverage-honest verdicts, prompt injection}
 
 ## III. Project concept
-<use cases; proposed solution for the PBX and the AI SIP Test Engineer>
+{use cases; proposed solution for the PBX and the AI SIP Test Engineer}
 
 ## IV. System & software design
-<architecture, network, components, interfaces, data handling; orchestrator and skill design>
+{architecture, network, components, interfaces, data handling; orchestrator and skill design}
 
 ## V. Implementation
-<PBX installation and configuration; the group's skills and their integration>
+{PBX installation and configuration; the group's skills and their integration}
 
 ## VI. Test environment
-<hardware, VMs, network, software versions, capture setup, AI environments and models>
+{hardware, VMs, network, software versions, capture setup, AI environments and models}
 
 ## VII. Tests & results
-<core test table and signaling walkthroughs; AI test cases, transcripts, validator results>
+{core test table and signaling walkthroughs; AI test cases, transcripts, validator results}
 
 ## VIII. Evaluation
-<requirements met / not met; AI metrics; incorrect diagnoses; cross-environment differences; limitations>
+{requirements met / not met; AI metrics; incorrect diagnoses, unsupported inputs, cases needing human analysis; cross-environment differences; limitations}
 
 ## IX. Conclusion & future work
 

@@ -20,13 +20,16 @@ acknowledged, and later terminated with BYE.
 | 46–48 | Leg B (PBX → 1002): INVITE, 100, 180 |
 | 49 | Leg A: 180 |
 | 80–83 | Answer: 200 and ACK on both legs |
-| 2950–2953 | Teardown: BYE and 200 on both legs |
+| 84–5946 | RTP media (not in the evidence table; the PBX anchors media) |
+| 5947–5950 | Teardown: BYE and 200 on both legs |
 
 ## What it teaches
 
 - A back-to-back PBX creates **two dialogs** with different Call-IDs.
 - A `401` answering a REGISTER or INVITE **without credentials** is a normal
   challenge, not a failure.
+- The 200 to REGISTER lists the granted binding in its Contact (`;expires=3600`).
+- The ACK for a 2xx repeats the INVITE's credentials (frame 83).
 - Signaling cannot prove audio; `observed_by_tester` carries that claim.
 
 ## Expected results

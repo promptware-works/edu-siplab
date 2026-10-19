@@ -3,7 +3,8 @@
 test_id: call-to-unregistered-user
 verdict: fail
 failure_stage: routing
-basis: Credentialed INVITE (frame 33) answered with 480 Temporarily Unavailable (frame 35); 1003 not registered.
+basis: 'Credentialed INVITE (frame 33) answered with 404 Not Found (frame 35): the default dial plan found
+  no contact for 1003, which is not registered.'
 decisive_frames:
 - 33
 - 35

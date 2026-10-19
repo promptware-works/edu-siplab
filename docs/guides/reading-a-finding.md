@@ -2,7 +2,7 @@
 
 **Type:** Teaching aid — **not** a graded scenario. The data below is invented
 (lab addresses `10.20.0.0/24`, extension `2001`) and matches none of the
-scenarios under [`../../scenarios/`](../../siplab/scenarios/README.md).
+scenarios under [`siplab/scenarios/`](../../siplab/scenarios/README.md).\
 **Companion to:** the finding contract in [`boot/boot.md`](../../siplab/boot/boot.md)
 (Block 2), the machine schema
 [`schema/finding.schema.json`](../../siplab/schema/finding.schema.json), the worked
@@ -68,14 +68,15 @@ points at the matching worksheet check.
   ],
 
   // WHICH rules the judgment applied.
-  "rfc_ref": ["RFC 3261 §10.3", "RFC 3261 §22.2", "RFC 3261 §10.2.1.1"],
+  "rfc_ref": ["RFC 3261 §10.2", "RFC 3261 §10.3", "RFC 3261 §22.2", "RFC 3261 §21.4.2"],
 
   // A MANUAL check for the operator — never an action the system takes.
-  "next_check": "Check the maximum expiry configured for endpoint 2001 on the PBX if 600 s is unexpected.",
+  // Skill #1 gives none for a pass; the expiry remark lives in the rationale.
+  "next_check": null,
 
   // WHY — observations first, then the expected behavior, then any cause,
   // labeled as suspected.                                                (U5)
-  "rationale": "REGISTER (frame 12) was challenged with 401 (frame 13); the credentialed REGISTER (frame 15) requested Expires 3600 and was accepted with 200 and Expires 600 (frame 16). Expected: a registrar may shorten the requested expiry (RFC 3261 §10.2.1.1). Suspected cause: a maximum-expiry setting on the PBX.",
+  "rationale": "REGISTER (frame 12) was challenged with 401 (frame 13); the credentialed REGISTER (frame 15) requested Expires 3600 and was accepted with 200 and Expires 600 (frame 16). Expected: a registrar may grant a shorter expiry than requested (RFC 3261 §10.3). Suspected cause: a maximum-expiry setting on the PBX; check it if 600 s is unexpected.",
 
   // Skill-specific keys follow the shared ones.
   "registrations": [
