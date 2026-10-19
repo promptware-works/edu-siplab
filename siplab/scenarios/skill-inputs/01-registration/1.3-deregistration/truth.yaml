@@ -1,0 +1,11 @@
+# Ground truth — schema: siplab/schema/truth.schema.json
+# NEVER paste this file into the chat. It is used only to score the consolidated report.
+test_id: deregistration-1001
+verdict: pass
+failure_stage: none
+basis: Credentialed de-registration (frame 22, Expires 0) accepted with 200 (frame 23).
+decisive_frames:
+- 22
+- 23
+expected_skills:
+- 01-registration

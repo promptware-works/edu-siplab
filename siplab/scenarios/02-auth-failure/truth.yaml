@@ -1,0 +1,12 @@
+# Ground truth — schema: siplab/schema/truth.schema.json
+# NEVER paste this file into the chat. It is used only to score the consolidated report.
+test_id: wrong-password-registration
+verdict: fail
+failure_stage: authentication
+basis: Credentialed REGISTER of 1001 (frame 7) answered with 401 (frame 8); client configured with a wrong
+  password.
+decisive_frames:
+- 7
+- 8
+expected_skills:
+- 01-registration

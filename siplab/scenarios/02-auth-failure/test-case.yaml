@@ -1,0 +1,40 @@
+# Test case (AI input) — schema: siplab/schema/test-case.schema.json
+test_id: wrong-password-registration
+title: Client 1001 registers with a wrong password
+objective: Evaluate the registration of user 1001 after its password was deliberately changed on the client.
+focus:
+- registration
+endpoints:
+- user: '1001'
+  device: Linphone desktop
+  address: 192.168.56.21
+  role: registrant
+- user: '1002'
+  device: Linphone Android
+  address: 192.168.56.22
+  role: registrant
+pbx:
+  software: Asterisk 20.9.3 (PJSIP)
+  address: 192.168.56.10
+  notes: 'Default dial plan: Dial(PJSIP/${EXTEN}) followed by Hangup(), so calls to configured but unregistered
+    endpoints are answered with 404 Not Found. Endpoints authenticate REGISTER and INVITE with digest
+    (MD5). direct_media=no, so media is anchored at the PBX. qualify_frequency=60.'
+preconditions:
+- Client 1001 is configured with a wrong password
+- Client 1002 is configured correctly
+steps:
+- Start the capture
+- Start both clients
+- Wait 30 seconds
+- Stop the capture
+expected_observations:
+- Client 1002 is challenged and then accepted with 200
+- Client 1001 is challenged and its credentialed REGISTER is rejected
+observed_by_tester:
+- Client 1001 shows 'registration failed'
+- Client 1002 shows 'registered'
+capture:
+  file: wrong-password-registration.pcapng
+  transport: udp
+  recipe: reference
+  synthetic: true

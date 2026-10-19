@@ -1,0 +1,46 @@
+# Test case (AI input) — schema: siplab/schema/test-case.schema.json
+test_id: basic-registered-call
+title: Registered users 1001 and 1002 complete an internal call
+objective: Evaluate a recorded internal call from user 1001 (desktop) to user 1002 (mobile), including
+  both registrations.
+focus:
+- registration
+- call
+endpoints:
+- user: '1001'
+  device: Linphone desktop
+  address: 192.168.56.21
+  role: caller
+- user: '1002'
+  device: Linphone Android
+  address: 192.168.56.22
+  role: callee
+pbx:
+  software: Asterisk 20.9.3 (PJSIP)
+  address: 192.168.56.10
+  notes: 'Default dial plan: Dial(PJSIP/${EXTEN}) followed by Hangup(), so calls to configured but unregistered
+    endpoints are answered with 404 Not Found. Endpoints authenticate REGISTER and INVITE with digest
+    (MD5). direct_media=no, so media is anchored at the PBX. qualify_frequency=60.'
+preconditions:
+- Both clients are configured with the correct passwords
+- The capture runs on the PBX host before the clients start
+steps:
+- Start both clients and wait until they show 'registered'
+- Call 1002 from 1001
+- Answer on 1002 and talk for about 30 seconds
+- Hang up on 1001
+- Stop the capture
+expected_observations:
+- Each user's REGISTER is challenged and then accepted with 200
+- An INVITE from 1001 reaches 1002 through the PBX
+- A 200 and an ACK confirm both call legs
+- BYE and 200 terminate both call legs
+observed_by_tester:
+- The phone of 1002 rang and the call was answered
+- Both users heard each other
+- The call ended normally when 1001 hung up
+capture:
+  file: basic-registered-call.pcapng
+  transport: udp
+  recipe: reference
+  synthetic: true

@@ -1,0 +1,19 @@
+# Ground truth — schema: siplab/schema/truth.schema.json
+# NEVER paste this file into the chat. It is used only to score the consolidated report.
+test_id: basic-registered-call
+verdict: pass
+failure_stage: none
+basis: Both users registered (frames 4, 8); both call legs answered and acknowledged (frames 80-83); both
+  legs terminated with BYE/200 (frames 5947-5950); tester confirmed two-way audio.
+decisive_frames:
+- 4
+- 8
+- 80
+- 81
+- 82
+- 83
+- 5948
+- 5950
+expected_skills:
+- 01-registration
+- 02-call-flow

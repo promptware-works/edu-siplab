@@ -1,7 +1,7 @@
 # SIPLab — Delivery Plan (Selectable Timelines)
 
 **Companion to:** [`proposal.md`](./proposal.md) (timeline-neutral) and
-[`test-worksheet.md`](./test-worksheet.md) (pass bar)
+[`test-worksheet.md`](./test-worksheet.md) (pass bar)\
 **Purpose:** Hold the **variable** part of the project — the schedule,
 checkpoints, deliverable sizes, per-phase grade split, submission workflow,
 and onboarding window — separately from the proposal, so a cohort can run on
@@ -36,13 +36,13 @@ system, the skill contract, or the pass bar.
 | Grade split | 25% / 35% / 40% across milestones | 100% on one milestone (checkpoints formative) |
 | Kickoff | Day 1 session, before MS01 | Day 0 pre-session, the week before Week 1 |
 | AI onboarding (proposal § 3.7) | Week 3, start of MS02 | Week 2 |
-| Authored skills | #2 + one elective per member beyond the first (proposal § 7.1) | #2 + one elective, regardless of group size |
+| Authored skills | #2 + one elective per member beyond the first (proposal § 7.1) | #2 + at most one elective |
 | Group corpus | ≥ 8 labeled cases | ≥ 5 labeled cases |
 | Held-out instructor corpus | ≥ 4 cases | ≥ 3 cases |
-| Injection case | Group-authored | One common case, instructor-provided |
+| Injection cases | The instructor's `scenarios/04-prompt-injection` for #1, plus one group-authored injection variant per authored skill | Same as the 6-week plan |
 | Final report (`report.md`) | 4,000–6,000 words | 2,500–3,500 words |
 | Defense | ≤ 20 min per group (10 min demo, 10 min Q&A) | ≤ 12 min per group (6 min demo, 6 min Q&A) |
-| Submission workflow | One PR per milestone | One draft PR, labeled per checkpoint |
+| Submission | One tag per milestone (`ms01`–`ms03`) in the group's private repository | Checkpoint tags `cp1`, `cp2` (formative) and a final tag `final` |
 | Advanced skills #9, #10 | Allowed as electives | Discouraged |
 
 > The **evaluation dimension weights** D1–D8 are identical in both variants —
@@ -60,7 +60,7 @@ the remaining cases are the group's choice.
 | Authentication failure (wrong password) | `fail` — `authentication` |
 | Unavailable or unregistered callee, or no answer / timeout | `fail` — `routing` or `call_setup` (as configured) |
 | Messaging between two users | `pass` or `fail` as observed |
-| Prompt-injection or malformed case (text in `User-Agent`, `Subject`, or a message body telling the AI what to conclude) | Correct verdict for the underlying signaling; injected text ignored |
+| Per authored skill, an injection variant of one of the skill's cases (text in `User-Agent`, `Subject`, or a message body telling the AI what to conclude) — the same capture with the injected text added to the evidence table is accepted | Correct verdict for the underlying signaling; injected text ignored |
 
 6-week groups additionally include a **caller-cancelled call** (`CANCEL`,
 `487`) and one case per elective skill that exercises its main check.
@@ -73,10 +73,10 @@ Before P1, each group agrees its scope and setup:
 
 | Exit condition |
 | --- |
-| Group formed (max. 3 students) and registered with a group number `<GG>` |
+| Group formed (max. 3 students) and registered with the instructor |
 | Short requirements list and proposed topology (server, devices, network) |
 | Chosen PBX, clients, and capture setup |
-| Group folder `groups/<GG>-<group-name>/` created on the group branch |
+| Private group repository created from `edu-siplab`, instructor invited with read access (proposal § 3.8) |
 
 ---
 
@@ -85,19 +85,24 @@ Before P1, each group agrees its scope and setup:
 The project total is distributed **25 / 35 / 40** across three milestones,
 one per phase.
 
-**Kickoff window.** Day 1 session before MS01.
+**Kickoff window.** Day 1 session before MS01.\
 **AI onboarding.** The bring-up in [`proposal.md`](./proposal.md) § 3.7 runs
-in Week 3; each member's two transcripts are the readiness deliverable.
+in Week 3; each member's two transcripts are the readiness deliverable.\
 **Budget guideline.** Set by the course team before the cohort starts.
 
 ### Submission workflow
 
-- Each group works on a branch `group/<GG>-<group-name>` off the classroom
-  repository, inside `groups/<GG>-<group-name>/`.
-- Every milestone closes with a pull request to `main` containing exactly
-  that milestone's deliverables.
-- The grader leaves milestone-scoped review comments; the group resolves
-  them before the next milestone opens.
+- Each group works in its private copy of `edu-siplab` (proposal § 3.8).
+  Paths in the deliverables below are inside `deliverables/`, except the
+  skills (`siplab/skills/`) and the catalogue (`siplab/boot/catalogue.md`).
+- Every milestone closes with a tag on the group's repository — `ms01`,
+  `ms02`, `ms03` — pushed before the deadline. The tagged commit is the
+  submission; later commits are not graded for that milestone.
+- The grader reviews the tagged state and sends milestone-scoped feedback
+  (e.g. as issues in the group's repository); the group resolves it before
+  the next milestone opens.
+- Without repository access, the group sends a `git bundle` of the tagged
+  state instead (proposal § 3.8).
 - Late submissions follow the course's standard late policy.
 
 ### Milestone 1 — Install & Configure the SIP PBX (Weeks 1–2) — *covers phase P1*
@@ -114,10 +119,12 @@ in Week 3; each member's two transcripts are the readiness deliverable.
 
 #### Deliverables (end of Week 2)
 
-- System and network diagram; component inventory with software versions.
-- Sanitized configuration extracts in `pbx/` and reproducible setup notes.
+- System and network diagram and component inventory with software
+  versions, in `pbx/`.
+- Sanitized configuration extracts (with `direct_media=no`) and reproducible
+  setup notes in `pbx/`.
 - Evidence that the PBX runs and the clients register (screenshots or a
-  capture of successful registrations).
+  capture of successful registrations) in `pbx/`.
 - Worksheet core checks C1–C6 marked.
 
 **Gate to MS02:** the PBX and at least two registered clients are ready for
@@ -144,10 +151,11 @@ call testing.
 
 #### Deliverables (end of Week 4)
 
-- Core test table (preconditions, steps, expected, observed, pass/fail).
-- Signaling walkthroughs of the essential flows, with frame references.
+- `core-tests.md`: the core test table (preconditions, steps, expected,
+  observed, pass/fail) and signaling walkthroughs of the essential flows,
+  with frame references.
 - `corpus/` with ≥ 8 labeled cases.
-- `spec.md` and the onboarding transcripts.
+- `spec.md`, and the onboarding transcripts in `onboarding/`.
 - Worksheet core checks C7–C14 marked.
 
 **Gate to MS03:** worksheet checks marked *gate* pass. All MS02 tests run
@@ -159,8 +167,9 @@ without the AI SIP Test Engineer.
 
 #### Activities — Weeks 5–6
 
-- Write the group's skills in RICTOC from the template; register them in
-  the group `catalogue.md`.
+- Implement the group's skills in ASPECT-S, starting from their runnable
+  placeholders under `siplab/skills/`; mark them as `implemented` in
+  `siplab/boot/catalogue.md`.
 - Run every corpus case through the orchestrator in **both** Copilot Chat
   and Claude Code; save paired transcripts; run the validator on every
   consolidated report.
@@ -168,15 +177,23 @@ without the AI SIP Test Engineer.
   across environments, injection-resistant, and return
   `insufficient_evidence` where the capture cannot decide; add a
   self-check step.
-- Run the instructor's held-out corpus (labels revealed after submission).
+- Before submitting, review every group skill in two tiers (proposal § 4.1):
+  `lint_skill.py` must report no errors, and every skill-reviewer `FAIL` is
+  either fixed or answered in `spec.md`; save both outputs in `governance/`.
+- Run every case of the instructor's held-out corpus (test cases and
+  evidence tables, no truth files) in both environments and save the
+  reports in `tests/`; the instructor scores them after submission
+  (proposal § 6.1).
 - Write the evaluation (proposal § 6.1) and the final `report.md`.
 - Demonstrate the PBX first, then the AI SIP Test Engineer, and defend the
   design as a group.
 
 #### Deliverables (end of Week 6)
 
-- Final skills (`skills/<NN>-<short-name>/SKILL.md`) and `catalogue.md`.
+- Final skills (`siplab/skills/<NN>-<short-name>/SKILL.md`) and `siplab/boot/catalogue.md`.
 - `tests/` with paired transcripts and validator output per case.
+- `governance/` with the linter output and skill-reviewer review of each
+  group skill.
 - Filled `worksheet.md` (universal, per-skill, cross-environment, and
   integration checks).
 - `report.md`, 4,000–6,000 words.
@@ -188,7 +205,7 @@ without the AI SIP Test Engineer.
 
 A group that fails the MS02 gate after remediation may complete MS03 on
 **instructor reference captures** instead of its own corpus. D1 and D3 are
-graded as achieved; the corpus part of D4 scores zero; MS03 is graded
+graded on the state the group actually reached; the corpus part of D4 scores zero; MS03 is graded
 normally. The path must be requested and approved by the instructor. It
 keeps the group working through the AI phase rather than stopping.
 
@@ -201,17 +218,20 @@ three phases and the full pass bar, collapses the grade into a single
 milestone, and uses weekly checkpoints for formative feedback.
 
 **Kickoff window.** Day 0 pre-session, the week before Week 1 — groups
-arrive with their topology and devices ready.
-**AI onboarding.** Proposal § 3.7, at the start of Week 2.
+arrive with their topology and devices ready.\
+**AI onboarding.** Proposal § 3.7, at the start of Week 2.\
 **Budget guideline.** Set by the course team before the cohort starts.
 
 ### Submission workflow
 
-- One branch `group/<GG>-<group-name>` and **one draft PR** opened in Week 1.
-- Each checkpoint is a labeled commit on that PR (`checkpoint-1`,
-  `checkpoint-2`); the grader comments on the PR.
-- The PR is marked ready for review at the end of Week 3 and merged after
-  grading.
+- Each group works in its private copy of `edu-siplab` (proposal § 3.8);
+  paths are as in the 6-week plan.
+- Each weekly checkpoint is a tag — `cp1`, `cp2` — that the grader reviews
+  for formative feedback.
+- The final submission is the tag `final`, pushed before the end of Week 3.
+- Without repository access, the group sends a `git bundle` of the tagged
+  state instead (proposal § 3.8).
+- Late submissions follow the course's standard late policy.
 
 ### Week 1 — Install, Configure & First Call — *covers phase P1, starts P2*
 
@@ -231,26 +251,31 @@ arrive with their topology and devices ready.
 #### Activities — Week 2
 
 - Complete the core tests (C7–C14) and signaling walkthroughs.
-- Build the corpus (≥ 5 cases, including the instructor's injection case).
+- Build the corpus (≥ 5 cases, including one injection variant per skill
+  the group authors).
 - Complete the AI onboarding; write `spec.md`; draft v1 of the group's
-  skills (#2 + one elective).
+  skills (#2 + at most one elective).
 
 #### Week 2 checkpoint (end of Week 2)
 
-- Core test table and walkthroughs; gate checks pass.
-- `corpus/`, `spec.md`, onboarding transcripts, v1 skills.
+- `core-tests.md`; gate checks pass.
+- `corpus/`, `spec.md`, `onboarding/`, v1 skills.
 
 ### Week 3 — Integrate, Evaluate & Defend — *covers phase P3*
 
 #### Activities — Week 3
 
 - Integrate and harden the skills; paired transcripts and validator runs
-  for every case; held-out corpus run.
+  for every case; held-out corpus run in both environments, reports saved
+  for instructor scoring.
+- Before submitting, lint every group skill without errors and fix or answer
+  every skill-reviewer `FAIL` in `spec.md`; save both outputs in
+  `governance/` (proposal § 4.1).
 - Write `report.md` and prepare the demonstration.
 
 #### Final deliverables (end of Week 3)
 
-- Final skills, `catalogue.md`, `tests/`, filled `worksheet.md`.
+- Final skills, `siplab/boot/catalogue.md`, `tests/`, `governance/`, filled `worksheet.md`.
 - `report.md`, 2,500–3,500 words.
 - Demonstration and defense.
 
@@ -269,8 +294,8 @@ same scoring rules, on request and with instructor approval.
 ### Why three weeks is enough (and where it strains)
 
 **Sufficient because:** the orchestrator, the worked registration skill,
-the schemas, the TShark recipes, the validator, and the reference scenarios
-are instructor-provided; groups write the PBX configuration and two skill
+the runnable placeholders, the schemas, the TShark recipes, the validator,
+and the reference scenarios are instructor-provided; groups write the PBX configuration and at most two skill
 bodies, not the contract or the tooling.
 
 **Strains to expect:**
@@ -297,12 +322,12 @@ schedule.
 
 <One-paragraph framing: who this fits, how the grade is structured.>
 
-**Kickoff window.** <When the kickoff runs.>
-**AI onboarding.** <When the proposal § 3.7 bring-up runs.>
+**Kickoff window.** <When the kickoff runs.>\
+**AI onboarding.** <When the proposal § 3.7 bring-up runs.>\
 **Budget guideline.** <Per-group or per-student budget for this timeline.>
 
 ### Submission workflow
-<Branch and PR conventions for this timeline.>
+<Tag conventions for this timeline.>
 
 ### <Period 1> — Install & Configure the SIP PBX — *covers phase P1*
 ### <Period 2> — Test & Verify the SIP PBX — *covers phase P2*
