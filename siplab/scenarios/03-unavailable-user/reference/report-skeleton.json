@@ -1,0 +1,93 @@
+{
+  "test_id": "call-to-unregistered-user",
+  "overall_verdict": "insufficient_evidence",
+  "overall_failure_stage": "unknown",
+  "coverage": "partial",
+  "gaps": [
+    {
+      "kind": "placeholder",
+      "skill": "02-call-flow",
+      "fact": "Skill #2 (Call Setup & Teardown) returned a placeholder finding; its scope was not analyzed.",
+      "closing_action": "Implement skill #2 (Call Setup & Teardown) and re-run the test."
+    }
+  ],
+  "summary": "Registration passed; the call attempt was not analyzed because skill #2 is a placeholder.",
+  "plan": [
+    "01-registration",
+    "02-call-flow"
+  ],
+  "findings": [
+    {
+      "skill": "01-registration",
+      "test_id": "call-to-unregistered-user",
+      "summary": "User 1001 registered after a normal digest challenge.",
+      "verdict": "pass",
+      "failure_stage": "none",
+      "confidence": 0.9,
+      "evidence": [
+        {
+          "frame": 3,
+          "field": "sip.auth.username",
+          "value": "1001"
+        },
+        {
+          "frame": 4,
+          "field": "sip.Status-Code",
+          "value": "200"
+        },
+        {
+          "frame": 4,
+          "field": "sip.Contact",
+          "value": "<sip:1001@192.168.56.21:5060;transport=udp>;expires=3600"
+        }
+      ],
+      "rfc_ref": [
+        "RFC 3261 §10.2",
+        "RFC 3261 §10.3",
+        "RFC 3261 §22.2",
+        "RFC 3261 §21.4.2"
+      ],
+      "next_check": null,
+      "rationale": "User 1001: REGISTER (frame 1) was challenged with 401 (frame 2); the credentialed REGISTER (frame 3) was accepted with 200, Contact expires=3600 (frame 4). Expected: a challenged REGISTER is retried with credentials and accepted with 200, which lists the granted binding (RFC 3261 §10.3, §22.2). The initial 401 responses are normal challenges. User 1003 has role callee and sent no REGISTER; it was not evaluated.",
+      "registrations": [
+        {
+          "user": "1001",
+          "call_id": "Qx81vN3pTa",
+          "request_frames": [
+            1,
+            3
+          ],
+          "challenge_frames": [
+            2
+          ],
+          "final_frame": 4,
+          "final_status": "200",
+          "credentials_sent": true,
+          "digest_algorithm": "MD5",
+          "granted_expires": "3600",
+          "outcome": "registered"
+        }
+      ]
+    }
+  ],
+  "conflicts": [],
+  "facts": [
+    {
+      "frame": 3,
+      "field": "sip.auth.username",
+      "value": "1001"
+    },
+    {
+      "frame": 4,
+      "field": "sip.Status-Code",
+      "value": "200"
+    },
+    {
+      "frame": 4,
+      "field": "sip.Contact",
+      "value": "<sip:1001@192.168.56.21:5060;transport=udp>;expires=3600"
+    }
+  ],
+  "interpretation": "AI interpretation: skill #1 shows user 1001 registered. No skill analyzed the INVITE transaction, so the outcome of the call attempt is not established by this report.",
+  "next_check": "Implement skill #2 (Call Setup & Teardown) and re-run the test."
+}

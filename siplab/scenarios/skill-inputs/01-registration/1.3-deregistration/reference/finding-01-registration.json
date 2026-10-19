@@ -1,0 +1,56 @@
+{
+  "skill": "01-registration",
+  "test_id": "deregistration-1001",
+  "summary": "User 1001 registered and later de-registered cleanly.",
+  "verdict": "pass",
+  "failure_stage": "none",
+  "confidence": 0.9,
+  "evidence": [
+    {
+      "frame": 22,
+      "field": "sip.Expires",
+      "value": "0"
+    },
+    {
+      "frame": 22,
+      "field": "sip.auth.username",
+      "value": "1001"
+    },
+    {
+      "frame": 23,
+      "field": "sip.Status-Code",
+      "value": "200"
+    }
+  ],
+  "rfc_ref": [
+    "RFC 3261 §10.2",
+    "RFC 3261 §10.3",
+    "RFC 3261 §22.2",
+    "RFC 3261 §21.4.2",
+    "RFC 3261 §10.2.2"
+  ],
+  "next_check": null,
+  "rationale": "User 1001: REGISTER (frame 1) was challenged with 401 (frame 2); the credentialed REGISTER (frame 3) was accepted with 200, Contact expires=3600 (frame 4). Its last REGISTER transaction is a de-registration: REGISTER with Expires 0 (frame 20) was challenged with 401 (frame 21); the credentialed REGISTER with Expires 0 (frame 22) was accepted with 200, Expires 0 (frame 23). Expected: a REGISTER with Expires 0 removes the binding (RFC 3261 §10.2.2). This is a de-registration, not a failure.",
+  "registrations": [
+    {
+      "user": "1001",
+      "call_id": "Qx81vN3pTa",
+      "request_frames": [
+        1,
+        3,
+        20,
+        22
+      ],
+      "challenge_frames": [
+        2,
+        21
+      ],
+      "final_frame": 23,
+      "final_status": "200",
+      "credentials_sent": true,
+      "digest_algorithm": "MD5",
+      "granted_expires": null,
+      "outcome": "deregistered"
+    }
+  ]
+}
