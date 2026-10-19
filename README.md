@@ -5,7 +5,7 @@ Build and test a SIP PBX — then extend it with an **AI SIP Test Engineer**.
 Student groups (up to three students) design, install, operate, and test a
 small open-source **SIP IP-PBX** with desktop and mobile clients, telephony,
 and messaging. They then extend their lab with a prompt-defined **AI SIP Test
-Engineer**: an in-chat **Orchestrator** that follows a
+Engineer**: an in-chat **orchestrator** that follows a
 **Plan → Approve → Execute** protocol and dispatches small **protocol skills**
 to diagnose saved packet captures of the group's own tests.
 
@@ -13,16 +13,19 @@ to diagnose saved packet captures of the group's own tests.
 > deterministic TShark recipe into an evidence table. The AI reasons only over
 > that table, cites packet numbers for every claim, and returns
 > `insufficient_evidence` when the capture cannot decide. A deterministic
-> validator checks every citation.
+> validator checks every citation and the verdict rule.
 
 ---
 
 ## Status
 
-**Proposal stage.** The project documents are published; the runtime
-artefacts (boot and catalogue prompts, orchestrator, skills, schemas, tools,
-reference scenarios) are being built. Links in the documents that point to
-those artefacts resolve once they land.
+**Skeleton release.** The orchestrator is complete, skill #1
+(Registration & Authentication) is the complete worked example, and skills
+#2–#10 are **runnable placeholders** for students to implement: each returns a
+fixed placeholder finding, so the whole pipeline runs today and every
+unimplemented skill shows up as a coverage gap. The reference scenarios use
+hand-built evidence tables in the exact recipe format until
+instructor-recorded captures replace them.
 
 ---
 
@@ -30,51 +33,112 @@ those artefacts resolve once they land.
 
 | Document | What it covers |
 | --- | --- |
-| [`proposal.md`](siplab/docs/project-proposal/proposal.md) | What the project is, why, the architecture, the skill contract, phases, evaluation, skill catalogue — timeline-neutral |
-| [`delivery-plan.md`](siplab/docs/project-proposal/delivery-plan.md) | 6-week / 3-milestone and 3-week / single-milestone schedules, deliverables, grade split, submission workflow |
-| [`test-worksheet.md`](siplab/docs/project-proposal/test-worksheet.md) | The pass/fail bar: core PBX checks, universal skill checks, cross-environment and integration checks, per-skill checks |
+| [`proposal.md`](siplab/docs/project-proposal/proposal.md) | What the project is, why, the architecture, the contracts, phases, evaluation, skill catalogue — timeline-neutral |
+| [`delivery-plan.md`](siplab/docs/project-proposal/delivery-plan.md) | 6-week and 3-week schedules, deliverables, grade split, submission workflow |
+| [`test-worksheet.md`](siplab/docs/project-proposal/test-worksheet.md) | The pass/fail bar: PBX checks, skill checks, cross-environment and integration checks |
 | [`glossary.md`](siplab/docs/project-proposal/glossary.md) | Project, SIP/telephony, AI, and tooling terms |
+| [`reading-a-finding.md`](siplab/docs/guides/reading-a-finding.md) | An annotated finding — read before writing a skill |
 
 ---
 
-## Portability is the rule
+## Quick start
 
-Every skill prompt must behave consistently in the two target environments:
+The AI SIP Test Engineer runs the same way in both target environments: paste
+the orchestrator, the boot payload, and the catalogue; paste a test message;
+approve the plan; paste each skill when it is dispatched. Paste only the
+**body** of each file — the text below its YAML frontmatter.
 
-- **GitHub Copilot Chat** (VS Code)
-- **Claude Code**
+### Manual start (works everywhere — the canonical flow)
 
-Prompts are plain markdown and depend only on natural-language conventions.
-IDE-specific files are thin invocation wrappers that load the canonical prompts
-under `siplab/` and never change their behaviour.
+1. Open this repository in your IDE and start a fresh chat session.
+2. Paste the body of [`siplab/orchestrator/sip-test-engineer.agent.md`](siplab/orchestrator/sip-test-engineer.agent.md).
+   Reply: `SIP Test Engineer orchestrator loaded — waiting for boot.`
+3. Paste the body of [`siplab/boot/boot.md`](siplab/boot/boot.md).
+   Reply: `SIPLab boot loaded — waiting for catalogue.`
+4. Paste the body of [`siplab/boot/catalogue.md`](siplab/boot/catalogue.md).
+   Reply: `Catalogue registered, 10 skills available — ready for test case.`
+5. Paste a test message: the line `TEST CASE`, a scenario's `test-case.yaml`,
+   the line `EVIDENCE TABLE`, its `evidence.tsv` — e.g. from
+   [`siplab/scenarios/02-auth-failure/`](siplab/scenarios/02-auth-failure/scenario.md).
+6. Review the **PLAN** and reply `approve` / `revise <text>` / `abort`.
+7. For each **DISPATCH**, paste the named skill's body, then type `next`.
+8. Save the **REPORT** JSON and validate it:
+
+   ```bash
+   python3 siplab/tools/validate_evidence.py \
+     --evidence siplab/scenarios/02-auth-failure/evidence.tsv \
+     --report report.json --truth siplab/scenarios/02-auth-failure/truth.yaml
+   ```
+
+### Claude Code (convenience wrappers)
+
+| Command | Effect |
+| --- | --- |
+| `/siplab-init` | Load orchestrator, boot payload, and catalogue in one step. |
+| `/siplab-catalogue [path]` | Register the default or a group catalogue. |
+| `/siplab-skill <N> [catalogue]` | Print skill `#N`'s body verbatim for dispatch. |
+| `/siplab-test <scenario or corpus test>` | Build the test message (never includes a truth file). |
+
+`siplab-init` and `siplab-catalogue` are also auto-discovered skills under
+[`.claude/skills/`](.claude/skills/).
+
+### GitHub Copilot Chat (convenience wrappers)
+
+- [`.github/copilot-instructions.md`](.github/copilot-instructions.md) — workspace rules.
+- [`.github/prompts/`](.github/prompts/) — `siplab-init`, `siplab-catalogue`,
+  `siplab-skill`, `siplab-test` prompt files (enable `chat.promptFiles` in VS Code).
+- [`.github/agents/siplab-orchestrator.agent.md`](.github/agents/siplab-orchestrator.agent.md)
+  and a chat mode under [`.github/chatmodes/`](.github/chatmodes/).
+
+> Wrappers are convenience, not requirements. If a wrapper ever disagrees with
+> the file it loads, the file under `siplab/` wins.
 
 ---
 
-## Repository layout (target)
+## Repository layout
 
 ```text
-siplab/
-├── boot/                     # boot.md, catalogue.md — pasted into a fresh chat
-├── orchestrator/             # sip-test-engineer.agent.md — reference orchestrator
-├── skills/                   # _rictoc-template, 01-registration (worked example), 02–10 stubs
-├── schema/                   # test-case and finding JSON Schemas
-├── scenarios/                # reference test cases, sanitized captures, evidence tables
-├── tools/                    # TShark extraction recipes, evidence validator
+siplab/                                   # Canonical source of truth (vendor-neutral)
+├── orchestrator/sip-test-engineer.agent.md   # The orchestrator — complete (ASPECT-A)
+├── boot/
+│   ├── boot.md                          # Message format, contracts, vocabulary, policies P1–P4
+│   └── catalogue.md                     # The ten-skill registry
+├── skills/
+│   ├── _template/SKILL.md               # Blank ASPECT-S skeleton
+│   ├── 01-registration/SKILL.md         # Worked example — complete
+│   └── 02-… 10-…/SKILL.md               # Runnable placeholders for students
+├── schema/                              # finding, report, test-case, truth (JSON Schema 2020-12)
+├── scenarios/                           # Reference tests + per-skill inputs, with reference outputs
+├── tools/
+│   ├── extract-evidence.md              # TShark recipes
+│   └── validate_evidence.py             # Deterministic evidence validator
 ├── docs/
-│   ├── project-proposal/     # proposal, delivery plan, test worksheet, glossary
-│   └── guides/               # reading-a-finding
-└── groups/                   # one folder per student group
+│   ├── project-proposal/                # Proposal, delivery plan, test worksheet, glossary
+│   └── guides/                          # Teaching aids on synthetic data
+└── groups/                              # One workspace per student group; _template/ to copy
+
+.claude/commands/, .claude/skills/       # Claude Code wrappers
+.github/                                 # Copilot wrappers and workspace instructions
 ```
 
 ---
 
-## RICTOC
+## How prompts are specified
 
-Every skill and the orchestrator are authored with six labelled sections —
-**R**ole, **I**nput, **C**ontext, **T**ask, **O**utput, **C**onstraints — and
-every skill returns the shared 10-key finding: `skill`, `test_id`, `summary`,
+The orchestrator and the skills follow **ASPECT** from
+[PROMPTARCH APR-001](https://github.com/promptware-works/promptarch/blob/main/principles/APR-001-aspect.md):
+**ASPECT-A** for the orchestrator (role and access, session bootstrap,
+invocation contract, scope, tools, routing and method, handoff contract,
+guardrails) and **ASPECT-S** for skills (purpose, pre-invocation checklist,
+inputs, procedure, output contract, quality gates and shared rules).
+Metadata lives in each file's frontmatter (APR-014 DECLARE); the body is the
+behavior.
+
+Every skill returns the shared 10-key finding: `skill`, `test_id`, `summary`,
 `verdict`, `failure_stage`, `confidence`, `evidence`, `rfc_ref`, `next_check`,
-`rationale`.
+`rationale`. The orchestrator's report keeps **coverage** separate from the
+verdict (APR-024): a placeholder or missing skill is a recorded gap, and a
+report with gaps can never be `pass`.
 
 ---
 

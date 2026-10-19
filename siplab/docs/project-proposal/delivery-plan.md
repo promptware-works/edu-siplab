@@ -39,7 +39,7 @@ system, the skill contract, or the pass bar.
 | Authored skills | #2 + one elective per member beyond the first (proposal § 7.1) | #2 + one elective, regardless of group size |
 | Group corpus | ≥ 8 labeled cases | ≥ 5 labeled cases |
 | Held-out instructor corpus | ≥ 4 cases | ≥ 3 cases |
-| Injection case | Group-authored | One common case, instructor-provided |
+| Injection case | Group-authored | One common case, instructor-provided (`scenarios/04-prompt-injection`) |
 | Final report (`report.md`) | 4,000–6,000 words | 2,500–3,500 words |
 | Defense | ≤ 20 min per group (10 min demo, 10 min Q&A) | ≤ 12 min per group (6 min demo, 6 min Q&A) |
 | Submission workflow | One PR per milestone | One draft PR, labeled per checkpoint |
@@ -159,8 +159,9 @@ without the AI SIP Test Engineer.
 
 #### Activities — Weeks 5–6
 
-- Write the group's skills in RICTOC from the template; register them in
-  the group `catalogue.md`.
+- Implement the group's skills in ASPECT-S, starting from their runnable
+  placeholders under `siplab/skills/`; register them as `implemented` in the
+  group `catalogue.md`.
 - Run every corpus case through the orchestrator in **both** Copilot Chat
   and Claude Code; save paired transcripts; run the validator on every
   consolidated report.
@@ -269,8 +270,8 @@ same scoring rules, on request and with instructor approval.
 ### Why three weeks is enough (and where it strains)
 
 **Sufficient because:** the orchestrator, the worked registration skill,
-the schemas, the TShark recipes, the validator, and the reference scenarios
-are instructor-provided; groups write the PBX configuration and two skill
+the runnable placeholders, the schemas, the TShark recipes, the validator,
+and the reference scenarios are instructor-provided; groups write the PBX configuration and two skill
 bodies, not the contract or the tooling.
 
 **Strains to expect:**

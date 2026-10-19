@@ -26,8 +26,11 @@ its skills, and give graders an identical checklist to score against.
 - **Parts B–E are filled during P3.** Every Pass check in B, D, and F must
   hold in *both* GitHub Copilot Chat and Claude Code; attach both
   transcripts.
-- **Run the validator** (`tools/validate-evidence`) on every consolidated
-  report before marking U4 or G4.
+- **Run the validator** on every consolidated report before marking U1–U4
+  and G3–G4:
+  `python3 siplab/tools/validate_evidence.py --evidence <table> --report <report.json> --truth <truth.yaml>`.
+- **Only authored skills are graded.** Placeholder skills appear in reports
+  as coverage gaps; they are not filled in Parts B, C, and F.
 - **Bring it to the defense.** The completed worksheet is the entry ticket
   for the demonstration and defense.
 
@@ -86,9 +89,9 @@ Every finding must validate against `schema/finding.schema.json`.
 
 | # | Integration check | Copilot | Claude Code | Notes |
 | --- | --- | --- | --- | --- |
-| G1 | The PLAN selects only the skills relevant to the test case, states why, and waits for `approve` | ☐ | ☐ | |
+| G1 | The PLAN selects exactly the skills mapped from the test case's focus tags, states why, and waits for `approve` | ☐ | ☐ | |
 | G2 | The consolidated report contains every skill finding unchanged, including uncertainty and any conflict between skills | ☐ | ☐ | |
-| G3 | The overall verdict follows the rule in proposal § 3.3 | ☐ | ☐ | |
+| G3 | Coverage, gaps, and overall verdict follow the rule in proposal § 3.3 (validator rule check passes); a report with gaps is never `pass` | ☐ | ☐ | |
 | G4 | The validator reports zero unsupported citations in the consolidated report | ☐ | ☐ | |
 | G5 | The report separates deterministic facts from the evidence table from AI interpretations | ☐ | ☐ | |
 
@@ -109,8 +112,10 @@ appropriate skill selection ___ / ___.
 
 ## Part F — Per-skill pass checks
 
-Reference inputs for each skill are in `scenarios/skill-inputs/<NN>-…/`
-(test case + evidence table). Expected responses depend on configuration;
+Reference inputs for each check are listed in
+[`scenarios/skill-inputs/README.md`](../../scenarios/skill-inputs/README.md)
+(test case, evidence table, truth file); several checks reuse the reference
+scenarios. Expected responses depend on configuration;
 the test case states the expected response for the group's PBX.
 
 ### F1 — #1 Registration & Authentication (worked example)

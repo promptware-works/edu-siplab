@@ -15,25 +15,35 @@ by topic; within each group entries are alphabetical.
 | Term | Expansion / definition |
 | --- | --- |
 | **AI SIP Test Engineer** | The orchestrator plus the protocol skills that analyze saved captures of the group's PBX tests. |
-| **Consolidated report** | The orchestrator's final output: overall verdict, every skill finding unchanged, conflicts, and the split between deterministic facts and AI interpretations. |
-| **Corpus (group)** | The group's labeled test cases with sanitized captures and evidence tables, built in P2. |
+| **APR** | Architectural Principle Record — a principle of the PROMPTARCH collection, e.g. APR-001 ASPECT. |
+| **ASPECT** | *Agent & Skill Prompt-Engineered Component Template* (PROMPTARCH APR-001): the specification format of SIPLab prompts. **ASPECT-A** specifies agents (the orchestrator); **ASPECT-S** specifies skills. |
+| **Boot payload** | `boot/boot.md`: the operator message format, the finding and report contracts, the verdict rule, the operator vocabulary, and policies P1–P4. Pasted after the orchestrator. |
+| **Body** | The part of a prompt file below its frontmatter — the only part pasted into the chat. |
+| **Consolidated report** | The orchestrator's REPORT: overall verdict, coverage and gaps, every skill finding unchanged, conflicts, deterministic facts, and the AI interpretation (`report.schema.json`). |
+| **Corpus (group)** | The group's labeled tests — test case, truth file, sanitized capture, evidence table — built in P2. |
 | **Corpus (held-out)** | The instructor's labeled cases with hidden labels, used for the final evaluation; not in the repository. |
+| **Coverage** | `complete` when every planned skill returned a usable finding and every focus tag had a skill; otherwise `partial`. Reported separately from the verdict (PROMPTARCH APR-024). |
 | **Evidence table** | The tab-separated file produced from a capture by the TShark recipe: one row per SIP message, keyed by frame number. The only packet data the AI sees. |
-| **Evidence validator** | The instructor-provided deterministic tool that checks every frame and field value cited in a report against the evidence table. |
+| **Evidence validator** | `tools/validate_evidence.py`: the instructor's deterministic checker for schemas, citations, the verdict rule, and (optionally) the ground truth. |
 | **Failure stage** | The enumerated point at which observed behavior departs from the expected behavior (`registration`, `authentication`, `routing`, `call_setup`, `media_negotiation`, `media_path`, `teardown`, `messaging`, `transport`, `unknown`, or `none`). |
 | **Finding** | The shared 10-key JSON object every skill returns (`skill`, `test_id`, `summary`, `verdict`, `failure_stage`, `confidence`, `evidence`, `rfc_ref`, `next_check`, `rationale`). |
+| **Focus tag** | A test-case value (`registration`, `call`, …) that selects one skill in the orchestrator's routing table. |
+| **Frontmatter** | The YAML block at the top of a prompt file holding its machine-readable metadata (PROMPTARCH APR-014 DECLARE). Never pasted into the chat. |
+| **Gap** | A recorded fact that a planned skill did not contribute (placeholder, not pasted, invalid reply, no skill for a focus tag), with the action that would close it. |
 | **Gate** | A worksheet check that must pass before the next phase starts. |
-| **Ground truth** | The verdict and failure stage a test case is known to have, recorded by the group (or instructor) from the test conditions and the capture. |
-| **Insufficient evidence** | The verdict a skill returns when the evidence table cannot decide the question; a correct answer, not an error. |
+| **Ground truth** | The verdict and failure stage a test is known to have, recorded in its truth file. |
+| **Insufficient evidence** | The verdict returned when the evidence cannot decide the question; a correct answer, not an error. |
 | **Operator** | The human (group member, instructor, or grader) driving the chat session. |
-| **Orchestrator** | The control prompt that runs PLAN → APPROVE → EXECUTE, dispatches skills, and consolidates findings. |
+| **Orchestrator** | The ASPECT-A agent that plans, waits for approval, dispatches skills, and consolidates findings; it never analyzes the evidence itself. |
+| **Placeholder skill** | A skill file shipped in ASPECT-S form with scope, inputs, and checks pre-filled, which returns a fixed placeholder finding until a group implements it. |
 | **Plan-and-Approve** | The orchestration protocol: the orchestrator proposes a plan, waits for operator approval, and only then dispatches skills. |
-| **Protocol skill** | A single prompt-defined specialist, authored in RICTOC, that analyzes one aspect of SIP behavior from the evidence table. |
-| **RICTOC** | The prompt-design template used for every skill and the orchestrator: **R**ole, **I**nput, **C**ontext, **T**ask, **O**utput, **C**onstraints. |
-| **Self-check** | The step where a skill re-reads its own output against its Constraints section before returning. |
+| **PROMPTARCH** | Promptware Works' collection of Architectural Principle Records for promptware. |
+| **Protocol skill** | A single prompt-defined specialist, specified in ASPECT-S, that judges one SIP procedure from the evidence table. |
+| **Self-check** | The step where a component re-reads its output against its Quality Gates and rules (skills) or Guardrails (orchestrator) before replying. |
 | **SIPLab** | This project: build and test a SIP PBX with an AI Test Engineer. |
-| **Stub** | A pre-filled but incomplete skill file shipped by the instructor. |
-| **Test case** | The labeled description of one test: objective, preconditions, steps, expected observations, observed outcome, ground truth (`test-case.schema.json`). |
+| **Test case** | The AI input describing one test: objective, focus tags, endpoints, preconditions, steps, expected observations, observed outcome (`test-case.schema.json`). |
+| **Test message** | The operator message: the line `TEST CASE`, the test case, the line `EVIDENCE TABLE`, the table. |
+| **Truth file** | `<test-id>.truth.yaml`: the ground truth of a test (`truth.schema.json`). Never pasted into the chat. |
 | **Worked example** | The single complete reference skill (`skills/01-registration/SKILL.md`). |
 
 ---
