@@ -5,7 +5,7 @@
 **Duration:** Variable — the delivery schedule lives in [`delivery-plan.md`](./delivery-plan.md) (6-week and 3-week variants defined)\
 **Cohort:** Groups of up to 3 students; each group delivers the whole project as a team\
 **Deliverable form:** A working SIP PBX lab, prompt-defined AI skills (no application code), and one group report (`report.md`)\
-**Version:** 1.0-draft — 2026-10-18 (timeline-neutral; delivery schedule in `delivery-plan.md`)
+**Version:** 0.1.0 — 2026-10-19 (pre-release; timeline-neutral; delivery schedule in `delivery-plan.md`)
 
 > **How this document is organized.** This proposal is **timeline-neutral**:
 > it defines *what* the project is, *why*, and *how it is assessed* — but not
