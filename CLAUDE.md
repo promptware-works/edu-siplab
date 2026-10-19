@@ -79,7 +79,7 @@ pull request.
 - Feature work: branch off `develop` (`feature/<short-name>` or
   `fix/<short-name>`), then merge back into `develop` by pull request.
 - Release: pull request `develop` → `main`, tag the merge commit on `main`
-  (e.g. `0.1.0`; `1.0.0` for the first cohort — no `v` prefix), fast-forward `develop` to `main`. Groups copy
+  (e.g. `v0.1.0`; `v1.0.0` for the first cohort), fast-forward `develop` to `main`. Groups copy
   from `main` and pull later releases from it.
 
 ## Rules when editing this repo
