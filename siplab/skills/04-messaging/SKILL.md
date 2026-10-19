@@ -23,7 +23,7 @@ metadata:
     produces:
       contracts: [siplab/schema/finding.schema.json]
     evals:
-      evaluated_by: [siplab/docs/project-proposal/test-worksheet.md#f4--4-instant-messaging]
+      evaluated_by: [docs/project-proposal/test-worksheet.md#f4--4-instant-messaging]
   x-siplab:
     catalogue_number: 4
     focus_tag: messaging

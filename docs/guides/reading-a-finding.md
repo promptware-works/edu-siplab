@@ -2,11 +2,11 @@
 
 **Type:** Teaching aid — **not** a graded scenario. The data below is invented
 (lab addresses `10.20.0.0/24`, extension `2001`) and matches none of the
-scenarios under [`../../scenarios/`](../../scenarios/README.md).
-**Companion to:** the finding contract in [`boot/boot.md`](../../boot/boot.md)
+scenarios under [`../../scenarios/`](../../siplab/scenarios/README.md).
+**Companion to:** the finding contract in [`boot/boot.md`](../../siplab/boot/boot.md)
 (Block 2), the machine schema
-[`schema/finding.schema.json`](../../schema/finding.schema.json), the worked
-skill [`skills/01-registration/SKILL.md`](../../skills/01-registration/SKILL.md),
+[`schema/finding.schema.json`](../../siplab/schema/finding.schema.json), the worked
+skill [`skills/01-registration/SKILL.md`](../../siplab/skills/01-registration/SKILL.md),
 and the worksheet checks U1–U7 in
 [`test-worksheet.md`](../project-proposal/test-worksheet.md).
 
@@ -147,5 +147,5 @@ What is wrong:
 
 ## See also
 
-- [`tools/extract-evidence.md`](../../tools/extract-evidence.md) — how the table is made, and how to run the validator.
-- [`scenarios/04-prompt-injection`](../../scenarios/04-prompt-injection/scenario.md) — U6 in practice.
+- [`tools/extract-evidence.md`](../../siplab/tools/extract-evidence.md) — how the table is made, and how to run the validator.
+- [`scenarios/04-prompt-injection`](../../siplab/scenarios/04-prompt-injection/scenario.md) — U6 in practice.

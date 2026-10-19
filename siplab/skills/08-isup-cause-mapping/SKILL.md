@@ -23,7 +23,7 @@ metadata:
     produces:
       contracts: [siplab/schema/finding.schema.json]
     evals:
-      evaluated_by: [siplab/docs/project-proposal/test-worksheet.md#f8--8-sipisup-cause-mapping]
+      evaluated_by: [docs/project-proposal/test-worksheet.md#f8--8-sipisup-cause-mapping]
   x-siplab:
     catalogue_number: 8
     focus_tag: interworking

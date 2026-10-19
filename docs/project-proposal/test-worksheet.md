@@ -34,7 +34,7 @@ its skills, and give graders an identical checklist to score against.
 - **Self-check your skills before submitting.** Run the linter
   (`python3 siplab/tools/lint_skill.py siplab/skills/<NN>-<short-name>/SKILL.md`)
   and the advisory skill reviewer
-  ([`agents/skill-reviewer.agent.md`](../../agents/skill-reviewer.agent.md),
+  ([`agents/skill-reviewer.agent.md`](../../siplab/agents/skill-reviewer.agent.md),
   `/siplab-governance` in Claude Code) to catch structure, scope, and contract
   problems early. They complement these checks — they do not replace them,
   and they do not grade.
@@ -120,7 +120,7 @@ appropriate skill selection ___ / ___.
 ## Part F — Per-skill pass checks
 
 Reference inputs for each check are listed in
-[`scenarios/skill-inputs/README.md`](../../scenarios/skill-inputs/README.md)
+[`scenarios/skill-inputs/README.md`](../../siplab/scenarios/skill-inputs/README.md)
 (test case, evidence table, truth file); several checks reuse the reference
 scenarios. Expected responses depend on configuration;
 the test case states the expected response for the group's PBX.

@@ -23,7 +23,7 @@ metadata:
     produces:
       contracts: [siplab/schema/finding.schema.json]
     evals:
-      evaluated_by: [siplab/docs/project-proposal/test-worksheet.md#f10--10-rtprtcp-media-quality-advanced]
+      evaluated_by: [docs/project-proposal/test-worksheet.md#f10--10-rtprtcp-media-quality-advanced]
   x-siplab:
     catalogue_number: 10
     focus_tag: media_quality

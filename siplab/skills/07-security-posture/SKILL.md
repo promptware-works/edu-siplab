@@ -23,7 +23,7 @@ metadata:
     produces:
       contracts: [siplab/schema/finding.schema.json]
     evals:
-      evaluated_by: [siplab/docs/project-proposal/test-worksheet.md#f7--7-sip-security-posture]
+      evaluated_by: [docs/project-proposal/test-worksheet.md#f7--7-sip-security-posture]
   x-siplab:
     catalogue_number: 7
     focus_tag: security

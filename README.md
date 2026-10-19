@@ -56,8 +56,8 @@ Then:
 - **No repository access possible?** Send a bundle instead:
   `git bundle create siplab-<group-name>-ms01.bundle --all`.
 
-Details: [proposal § 3.8](siplab/docs/project-proposal/proposal.md#38-team-repositories)
-and the submission workflow in [`delivery-plan.md`](siplab/docs/project-proposal/delivery-plan.md).
+Details: [proposal § 3.8](docs/project-proposal/proposal.md#38-team-repositories)
+and the submission workflow in [`delivery-plan.md`](docs/project-proposal/delivery-plan.md).
 
 ---
 
@@ -65,11 +65,11 @@ and the submission workflow in [`delivery-plan.md`](siplab/docs/project-proposal
 
 | Document | What it covers |
 | --- | --- |
-| [`proposal.md`](siplab/docs/project-proposal/proposal.md) | What the project is, why, the architecture, the contracts, phases, evaluation, skill catalogue — timeline-neutral |
-| [`delivery-plan.md`](siplab/docs/project-proposal/delivery-plan.md) | 6-week and 3-week schedules, deliverables, grade split, submission workflow |
-| [`test-worksheet.md`](siplab/docs/project-proposal/test-worksheet.md) | The pass/fail bar: PBX checks, skill checks, cross-environment and integration checks |
-| [`glossary.md`](siplab/docs/project-proposal/glossary.md) | Project, SIP/telephony, AI, and tooling terms |
-| [`reading-a-finding.md`](siplab/docs/guides/reading-a-finding.md) | An annotated finding — read before writing a skill |
+| [`proposal.md`](docs/project-proposal/proposal.md) | What the project is, why, the architecture, the contracts, phases, evaluation, skill catalogue — timeline-neutral |
+| [`delivery-plan.md`](docs/project-proposal/delivery-plan.md) | 6-week and 3-week schedules, deliverables, grade split, submission workflow |
+| [`test-worksheet.md`](docs/project-proposal/test-worksheet.md) | The pass/fail bar: PBX checks, skill checks, cross-environment and integration checks |
+| [`glossary.md`](docs/project-proposal/glossary.md) | Project, SIP/telephony, AI, and tooling terms |
+| [`reading-a-finding.md`](docs/guides/reading-a-finding.md) | An annotated finding — read before writing a skill |
 
 ---
 
@@ -132,31 +132,32 @@ approve the plan; paste each skill when it is dispatched. Paste only the
 ## Repository layout
 
 ```text
-siplab/                                   # Canonical source of truth (vendor-neutral)
-├── agents/                              # ASPECT-A agents
-│   ├── sip-test-engineer.agent.md       # The orchestrator — complete
-│   └── skill-reviewer.agent.md          # Governance agent — advisory skill review
+docs/                                     # What to do — the project documents
+├── project-proposal/                     # Proposal, delivery plan, test worksheet, glossary
+└── guides/                               # Teaching aids on synthetic data
+
+siplab/                                   # What you use and extend — canonical, vendor-neutral
+├── agents/                               # ASPECT-A agents
+│   ├── sip-test-engineer.agent.md        # The orchestrator — complete
+│   └── skill-reviewer.agent.md           # Governance agent — advisory skill review
 ├── boot/
-│   ├── boot.md                          # Message format, contracts, vocabulary, policies P1–P4
-│   └── catalogue.md                     # The ten-skill registry
+│   ├── boot.md                           # Message format, contracts, vocabulary, policies P1–P4
+│   └── catalogue.md                      # The ten-skill registry
 ├── skills/
-│   ├── _template/SKILL.md               # Blank ASPECT-S skeleton
-│   ├── 01-registration/SKILL.md         # Worked example — complete
-│   └── 02-… 10-…/SKILL.md               # Runnable placeholders for students
-├── schema/                              # finding, report, test-case, truth (JSON Schema 2020-12)
-├── scenarios/                           # Reference tests + per-skill inputs, with reference outputs
-├── tools/
-│   ├── extract-evidence.md              # TShark recipes
-│   ├── validate_evidence.py             # Deterministic evidence validator
-│   └── lint_skill.py                    # Deterministic skill linter
-└── docs/
-    ├── project-proposal/                # Proposal, delivery plan, test worksheet, glossary
-    └── guides/                          # Teaching aids on synthetic data
+│   ├── _template/SKILL.md                # Blank ASPECT-S skeleton
+│   ├── 01-registration/SKILL.md          # Worked example — complete
+│   └── 02-… 10-…/SKILL.md                # Runnable placeholders for students
+├── schema/                               # finding, report, test-case, truth (JSON Schema 2020-12)
+├── scenarios/                            # Reference tests + per-skill inputs, with reference outputs
+└── tools/
+    ├── extract-evidence.md               # TShark recipes
+    ├── validate_evidence.py              # Deterministic evidence validator
+    └── lint_skill.py                     # Deterministic skill linter
 
-deliverables/                            # Empty templates — each group fills them in its own copy
+deliverables/                             # What you hand in — empty templates, filled in each group's copy
 
-.claude/commands/, .claude/skills/       # Claude Code wrappers
-.github/                                 # Copilot wrappers and workspace instructions
+.claude/commands/, .claude/skills/        # Claude Code wrappers
+.github/                                  # Copilot wrappers and workspace instructions
 ```
 
 ---

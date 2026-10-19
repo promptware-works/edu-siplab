@@ -23,7 +23,7 @@ metadata:
     produces:
       contracts: [siplab/schema/finding.schema.json]
     evals:
-      evaluated_by: [siplab/docs/project-proposal/test-worksheet.md#f5--5-nat--media-path]
+      evaluated_by: [docs/project-proposal/test-worksheet.md#f5--5-nat--media-path]
   x-siplab:
     catalogue_number: 5
     focus_tag: nat

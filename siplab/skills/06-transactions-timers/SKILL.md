@@ -23,7 +23,7 @@ metadata:
     produces:
       contracts: [siplab/schema/finding.schema.json]
     evals:
-      evaluated_by: [siplab/docs/project-proposal/test-worksheet.md#f6--6-transactions-dialogs--timers]
+      evaluated_by: [docs/project-proposal/test-worksheet.md#f6--6-transactions-dialogs--timers]
   x-siplab:
     catalogue_number: 6
     focus_tag: transactions

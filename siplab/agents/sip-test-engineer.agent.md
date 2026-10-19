@@ -31,7 +31,7 @@ metadata:
     produces:
       contracts: [siplab/schema/report.schema.json]
     evals:
-      evaluated_by: [siplab/docs/project-proposal/test-worksheet.md#part-d--orchestrator-integration-checks-p3-once-per-group, siplab/scenarios]
+      evaluated_by: [docs/project-proposal/test-worksheet.md#part-d--orchestrator-integration-checks-p3-once-per-group, siplab/scenarios]
   x-siplab:
     paste: body-only
     ready_reply: "SIP Test Engineer orchestrator loaded — waiting for boot."

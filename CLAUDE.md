@@ -9,7 +9,7 @@ precise, versioned, reviewable.
 
 ## What lives where
 
-- **Canonical source of truth: `siplab/`.**
+- **Canonical source of truth of the AI SIP Test Engineer: `siplab/`.**
   - `siplab/agents/` — the two **ASPECT-A** agents (PROMPTARCH APR-001):
     `sip-test-engineer.agent.md`, the orchestrator, fully implemented; and
     `skill-reviewer.agent.md`, the advisory governance agent that reviews a
@@ -27,8 +27,9 @@ precise, versioned, reviewable.
     reference outputs) and per-skill inputs.
   - `siplab/tools/` — TShark extraction recipes, the evidence validator, and
     the skill linter (governance tier 1).
-  - `siplab/docs/project-proposal/` — proposal, delivery plan, test worksheet, glossary.
-  - `siplab/docs/guides/` — teaching aids on synthetic data.
+- **`docs/`** — the project documents: `docs/project-proposal/` (proposal,
+  delivery plan, test worksheet, glossary) and `docs/guides/` (teaching aids on
+  synthetic data). Instructor-owned, never pasted into a chat.
 - **`deliverables/`** — empty templates for a group's deliverables. Groups fill
   them in their own private copy of this repository, never here.
 - **Wrappers (convenience only): `.claude/` and `.github/`.** They load the
@@ -112,4 +113,4 @@ done
 ```
 
 When in doubt about any behaviour, read
-[siplab/docs/project-proposal/proposal.md](siplab/docs/project-proposal/proposal.md).
+[docs/project-proposal/proposal.md](docs/project-proposal/proposal.md).

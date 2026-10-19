@@ -9,5 +9,5 @@ One set of files per test, all sharing the same `<test-id>`:
 | `<test-id>.evidence.tsv` | `siplab/tools/extract-evidence.md` | Yes |
 | `<test-id>.truth.yaml` | `siplab/schema/truth.schema.json` | **Never** |
 
-See `siplab/docs/project-proposal/delivery-plan.md` § *Required corpus
+See `docs/project-proposal/delivery-plan.md` § *Required corpus
 composition* for the mandatory test types.

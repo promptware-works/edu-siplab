@@ -251,7 +251,7 @@ compares the observed messages with the messages defined in the RFCs
    the ground-truth verdict and failure stage; it is **never pasted into the
    chat** and is used only to score the result.
 3. **Extract.** Run the instructor-provided TShark recipe
-   ([`tools/extract-evidence.md`](../../tools/extract-evidence.md)) to produce
+   ([`tools/extract-evidence.md`](../../siplab/tools/extract-evidence.md)) to produce
    the **evidence table**: one row per SIP message, keyed by frame number. The
    reference field set is:
 
@@ -298,7 +298,7 @@ declares it.
 ### 3.3 Orchestrator behaviour — Plan & Approve
 
 The orchestrator is provided **complete** by the instructor
-([`agents/sip-test-engineer.agent.md`](../../agents/sip-test-engineer.agent.md)).
+([`agents/sip-test-engineer.agent.md`](../../siplab/agents/sip-test-engineer.agent.md)).
 It routes and consolidates; it **never analyzes the evidence itself** and
 never fills in for a missing or placeholder skill.
 
@@ -409,41 +409,46 @@ text below the closing `---` of the frontmatter — is pasted into the chat.
 
 #### Repository layout (provided by the instructor)
 
+The repository has three top-level folders, one per question:
+
 ```text
-siplab/
-├── agents/                           # ASPECT-A agents
-│   ├── sip-test-engineer.agent.md    # The orchestrator, complete — pasted first in a test session
-│   └── skill-reviewer.agent.md       # Governance agent — advisory review of a skill (§ 4.1)
-├── boot/
-│   ├── boot.md                       # Pasted second — message format, contracts, vocabulary, policies P1–P4
-│   └── catalogue.md                  # Pasted third — skill registry the orchestrator reads
-├── skills/
-│   ├── _template/SKILL.md            # Blank ASPECT-S skeleton
-│   ├── 01-registration/SKILL.md      # Worked example (complete)
-│   ├── 02-call-flow/SKILL.md         # Runnable placeholder — required for every group
-│   └── 03-… 10-…/SKILL.md            # Runnable placeholders — electives and advanced skills
-├── schema/
-│   ├── test-case.schema.json         # Test case (AI input)
-│   ├── truth.schema.json             # Ground truth (never AI input)
-│   ├── finding.schema.json           # Shared 10-key finding
-│   └── report.schema.json            # Consolidated report
-├── scenarios/                        # Reference tests: test case, evidence table, truth, reference outputs
-│   ├── 01-successful-call/
-│   ├── 02-auth-failure/
-│   ├── 03-unavailable-user/
-│   ├── 04-prompt-injection/
-│   └── skill-inputs/<NN>-…/          # Inputs for the per-skill pass checks
-├── tools/
-│   ├── extract-evidence.md           # TShark recipes (reference + extended field sets)
-│   ├── validate_evidence.py          # Deterministic evidence validator
-│   └── lint_skill.py                 # Deterministic skill linter (§ 4.1)
-├── docs/
-│   ├── project-proposal/             # proposal, delivery plan, test worksheet, glossary
-│   └── guides/reading-a-finding.md   # Annotated finding on synthetic data
+edu-siplab/
+├── docs/                                 # What to do — the project documents
+│   ├── project-proposal/                 # proposal, delivery plan, test worksheet, glossary
+│   └── guides/reading-a-finding.md       # Annotated finding on synthetic data
+├── siplab/                               # What you use and extend — the AI SIP Test Engineer
+│   ├── agents/                           # ASPECT-A agents
+│   │   ├── sip-test-engineer.agent.md    # The orchestrator, complete — pasted first in a test session
+│   │   └── skill-reviewer.agent.md       # Governance agent — advisory review of a skill (§ 4.1)
+│   ├── boot/
+│   │   ├── boot.md                       # Pasted second — message format, contracts, vocabulary, policies P1–P4
+│   │   └── catalogue.md                  # Pasted third — skill registry the orchestrator reads
+│   ├── skills/
+│   │   ├── _template/SKILL.md            # Blank ASPECT-S skeleton
+│   │   ├── 01-registration/SKILL.md      # Worked example (complete)
+│   │   ├── 02-call-flow/SKILL.md         # Runnable placeholder — required for every group
+│   │   └── 03-… 10-…/SKILL.md            # Runnable placeholders — electives and advanced skills
+│   ├── schema/
+│   │   ├── test-case.schema.json         # Test case (AI input)
+│   │   ├── truth.schema.json             # Ground truth (never AI input)
+│   │   ├── finding.schema.json           # Shared 10-key finding
+│   │   └── report.schema.json            # Consolidated report
+│   ├── scenarios/                        # Reference tests: test case, evidence table, truth, reference outputs
+│   │   ├── 01-successful-call/
+│   │   ├── 02-auth-failure/
+│   │   ├── 03-unavailable-user/
+│   │   ├── 04-prompt-injection/
+│   │   └── skill-inputs/<NN>-…/          # Inputs for the per-skill pass checks
+│   └── tools/
+│       ├── extract-evidence.md           # TShark recipes (reference + extended field sets)
+│       ├── validate_evidence.py          # Deterministic evidence validator
+│       └── lint_skill.py                 # Deterministic skill linter (§ 4.1)
+└── deliverables/                         # What you hand in — filled in each group's copy (§ 3.8)
 ```
 
-Next to `siplab/`, the repository has a top-level `deliverables/` folder.
-It holds empty templates here; each group fills it in its own copy of the
+`docs/` and `siplab/` belong to the instructor; within `siplab/`, groups change
+only the skills they implement and their catalogue status. `deliverables/`
+holds empty templates here; each group fills it in its own copy of the
 repository (§ 3.8):
 
 ```text
@@ -518,7 +523,7 @@ bring-up runs is set in [`delivery-plan.md`](./delivery-plan.md).
    *"Catalogue registered, 10 skills available — ready for test case."*
 5. **Repeat step 4 in Copilot Chat.** The expected replies are identical.
 6. **Run the reference scenarios** in each environment, following
-   [`scenarios/README.md`](../../scenarios/README.md). Scenario 02 must end
+   [`scenarios/README.md`](../../siplab/scenarios/README.md). Scenario 02 must end
    with `fail` / `authentication`; scenario 01 must end with
    `insufficient_evidence` and one `placeholder` gap for skill #2 — the
    correct, coverage-honest result while #2 is a placeholder. Run the
@@ -550,7 +555,7 @@ cleanly.
 | `deliverables/` | **Yes** — every group deliverable (§ 5.1, `deliverables/README.md`) |
 | `siplab/skills/<NN>-…/SKILL.md` of the skills the group implements | **Yes** — implemented in place (§ 4) |
 | `siplab/boot/catalogue.md` | **Only** the *Status* column of the group's skills |
-| Everything else — `siplab/agents/`, `boot/boot.md`, `schema/`, `tools/`, `scenarios/`, `docs/`, wrappers | **No** — instructor-owned; the grader checks that the diff against `upstream` is empty here |
+| Everything else — `docs/`, `siplab/agents/`, `siplab/boot/boot.md`, `siplab/schema/`, `siplab/tools/`, `siplab/scenarios/`, wrappers | **No** — instructor-owned; the grader checks that the diff against `upstream` is empty here |
 
 **Instructor updates.** The instructor publishes fixes as tagged releases on
 `main` of `edu-siplab` and announces them. Groups merge them with
@@ -614,14 +619,14 @@ skills would report on the same frames. SIPLab therefore adds the ASPECT-A
 that owns it.
 
 A blank skeleton lives at
-[`skills/_template/SKILL.md`](../../skills/_template/SKILL.md). Every
+[`skills/_template/SKILL.md`](../../siplab/skills/_template/SKILL.md). Every
 placeholder skill (`02`–`10`) is already in ASPECT-S form, with scope, inputs,
 RFC pointers, hints, and its worksheet checks pre-filled. To implement one,
 edit it in place in the group's repository (§ 3.8): delete its *Placeholder
 Reply* section, complete every TODO, and set its status to `implemented` in
 the frontmatter and in `boot/catalogue.md`. The single
 complete worked example is
-[`skills/01-registration/SKILL.md`](../../skills/01-registration/SKILL.md).
+[`skills/01-registration/SKILL.md`](../../siplab/skills/01-registration/SKILL.md).
 
 ### 4.1 Governance — review before submission
 
@@ -632,7 +637,7 @@ or grade.
 | Tier | Tool | Checks |
 | --- | --- | --- |
 | 1 — deterministic | `python3 siplab/tools/lint_skill.py <SKILL.md>` | L1 frontmatter · L2 sections and order · L3 status consistency (no placeholder, TODO, or authoring notes once implemented) · L4 scope redirects · L5 output keys · L6 verdict table · L7 stricter-mode elements · L8 portability · L9 catalogue alignment |
-| 2 — judgment | [`agents/skill-reviewer.agent.md`](../../agents/skill-reviewer.agent.md), in its own chat session | R1–R13: single procedure, scope boundaries, checklist, inputs, deterministic procedure, verdict table, output contract, untrusted input, coverage honesty, quality gates, portability, references |
+| 2 — judgment | [`agents/skill-reviewer.agent.md`](../../siplab/agents/skill-reviewer.agent.md), in its own chat session | R1–R13: single procedure, scope boundaries, checklist, inputs, deterministic procedure, verdict table, output contract, untrusted input, coverage honesty, quality gates, portability, references |
 
 The reviewer is started like the orchestrator (reviewer → boot → catalogue)
 and receives `SKILL UNDER REVIEW`, the skill body, and optionally
@@ -751,12 +756,12 @@ only on the evidence table; none needs live traffic.
 | 10 | RTP/RTCP Media Quality | Media | RTP stream presence per direction, loss, jitter, payload type vs. SDP. | RTP | *Advanced* |
 
 The **runtime contract** of each skill (input columns, extra output keys)
-is in [`boot/catalogue.md`](../../boot/catalogue.md); the **pass checks**
+is in [`boot/catalogue.md`](../../siplab/boot/catalogue.md); the **pass checks**
 are in [`test-worksheet.md`](./test-worksheet.md).
 
 > **Orchestrator note.** The orchestrator is provided complete by the
 > instructor, in ASPECT-A, at
-> [`agents/sip-test-engineer.agent.md`](../../agents/sip-test-engineer.agent.md).
+> [`agents/sip-test-engineer.agent.md`](../../siplab/agents/sip-test-engineer.agent.md).
 > Skills #2–#10 ship as runnable placeholders: each returns a fixed
 > placeholder finding, so the whole pipeline runs from day one and every
 > unimplemented skill shows up as a coverage gap. Groups mark the skills

@@ -23,7 +23,7 @@ metadata:
     produces:
       contracts: [siplab/schema/finding.schema.json]
     evals:
-      evaluated_by: [siplab/docs/project-proposal/test-worksheet.md, <your corpus folder>]
+      evaluated_by: [docs/project-proposal/test-worksheet.md, <your corpus folder>]
   x-siplab:
     catalogue_number: NN
     focus_tag: <focus tag>

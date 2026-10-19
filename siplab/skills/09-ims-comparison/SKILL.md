@@ -23,7 +23,7 @@ metadata:
     produces:
       contracts: [siplab/schema/finding.schema.json]
     evals:
-      evaluated_by: [siplab/docs/project-proposal/test-worksheet.md#f9--9-ims-comparison-advanced]
+      evaluated_by: [docs/project-proposal/test-worksheet.md#f9--9-ims-comparison-advanced]
   x-siplab:
     catalogue_number: 9
     focus_tag: ims

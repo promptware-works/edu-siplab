@@ -23,7 +23,7 @@ metadata:
     produces:
       contracts: [siplab/schema/finding.schema.json]
     evals:
-      evaluated_by: [siplab/docs/project-proposal/test-worksheet.md#f1--1-registration--authentication-worked-example, siplab/scenarios/01-successful-call, siplab/scenarios/02-auth-failure, siplab/scenarios/04-prompt-injection, siplab/scenarios/skill-inputs/01-registration]
+      evaluated_by: [docs/project-proposal/test-worksheet.md#f1--1-registration--authentication-worked-example, siplab/scenarios/01-successful-call, siplab/scenarios/02-auth-failure, siplab/scenarios/04-prompt-injection, siplab/scenarios/skill-inputs/01-registration]
       min_eval_score: 1.0
   x-siplab:
     catalogue_number: 1

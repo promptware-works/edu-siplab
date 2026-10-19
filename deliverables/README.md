@@ -8,7 +8,7 @@ status in `siplab/boot/catalogue.md` (proposal § 3.8).
 Start by copying the worksheet:
 
 ```bash
-cp siplab/docs/project-proposal/test-worksheet.md deliverables/worksheet.md
+cp docs/project-proposal/test-worksheet.md deliverables/worksheet.md
 ```
 
 | Path | Content | Phase |

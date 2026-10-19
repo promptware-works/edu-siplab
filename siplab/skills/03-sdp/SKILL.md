@@ -23,7 +23,7 @@ metadata:
     produces:
       contracts: [siplab/schema/finding.schema.json]
     evals:
-      evaluated_by: [siplab/docs/project-proposal/test-worksheet.md#f3--3-sdp-offeranswer]
+      evaluated_by: [docs/project-proposal/test-worksheet.md#f3--3-sdp-offeranswer]
   x-siplab:
     catalogue_number: 3
     focus_tag: media_negotiation
