@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siplab.local/schema/truth.schema.json",
+  "title": "SIPLab Ground Truth",
+  "description": "The known outcome of a test case, written in YAML as <test-id>.truth.yaml (or truth.yaml in scenario folders). Never paste it into the chat: it is used only to score the AI's consolidated report.",
+  "type": "object",
+  "required": ["test_id", "verdict", "failure_stage", "basis"],
+  "additionalProperties": false,
+  "properties": {
+    "test_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "verdict": { "$ref": "finding.schema.json#/properties/verdict" },
+    "failure_stage": { "$ref": "finding.schema.json#/properties/failure_stage" },
+    "basis": {
+      "type": "string",
+      "minLength": 1,
+      "description": "How the truth was established: test conditions, tester observation, and the decisive frames."
+    },
+    "decisive_frames": {
+      "type": "array",
+      "items": { "type": "integer", "minimum": 1 }
+    },
+    "expected_skills": {
+      "type": "array",
+      "description": "Skills a correct plan should select.",
+      "items": { "type": "string", "pattern": "^[0-9]{2}-[a-z0-9-]+$" }
+    }
+  }
+}

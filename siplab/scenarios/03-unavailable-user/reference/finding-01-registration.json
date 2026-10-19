@@ -1,0 +1,53 @@
+{
+  "skill": "01-registration",
+  "test_id": "call-to-unregistered-user",
+  "summary": "User 1001 registered after a normal digest challenge.",
+  "verdict": "pass",
+  "failure_stage": "none",
+  "confidence": 0.9,
+  "evidence": [
+    {
+      "frame": 3,
+      "field": "sip.auth.username",
+      "value": "1001"
+    },
+    {
+      "frame": 4,
+      "field": "sip.Status-Code",
+      "value": "200"
+    },
+    {
+      "frame": 4,
+      "field": "sip.Expires",
+      "value": "3600"
+    }
+  ],
+  "rfc_ref": [
+    "RFC 3261 §10.2",
+    "RFC 3261 §10.3",
+    "RFC 3261 §22.2",
+    "RFC 3261 §21.4.2",
+    "RFC 3261 §10.2.1.1"
+  ],
+  "next_check": null,
+  "rationale": "User 1001: REGISTER (frame 1) was challenged with 401 (frame 2); the credentialed REGISTER (frame 3) was accepted with 200 and Expires 3600 (frame 4). Expected: a challenged REGISTER is retried with credentials and accepted (RFC 3261 §10.3, §22.2). User 1003 sent no REGISTER and has role callee; it was not evaluated.",
+  "registrations": [
+    {
+      "user": "1001",
+      "call_id": "Qx81vN3pTa",
+      "request_frames": [
+        1,
+        3
+      ],
+      "challenge_frames": [
+        2
+      ],
+      "final_frame": 4,
+      "final_status": "200",
+      "credentials_sent": true,
+      "digest_algorithm": "MD5",
+      "granted_expires": "3600",
+      "outcome": "registered"
+    }
+  ]
+}

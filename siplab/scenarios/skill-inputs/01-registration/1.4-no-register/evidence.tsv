@@ -1,0 +1,5 @@
+frame.number	frame.time_relative	ip.src	ip.dst	sip.Method	sip.Status-Code	sip.r-uri	sip.from.user	sip.from.tag	sip.to.user	sip.to.tag	sip.Call-ID	sip.CSeq.seq	sip.CSeq.method	sip.Via.branch	sip.Expires	sip.auth.username	sip.auth.algorithm	sip.User-Agent	sdp.connection_info.address	sdp.media.media	sdp.media.port	sdp.media.format
+1	0.000000000	192.168.56.10	192.168.56.21	OPTIONS		sip:1001@192.168.56.21:5060		9f20c1ab	1001		7e3b1c55-0a2d-4f6e-8b91-c4d2e0f7a613	31544	OPTIONS	z9hG4bKPj77a1				Asterisk PBX 20.9.3				
+2	0.006000000	192.168.56.21	192.168.56.10		200			9f20c1ab	1001	qL0v3s	7e3b1c55-0a2d-4f6e-8b91-c4d2e0f7a613	31544	OPTIONS	z9hG4bKPj77a1								
+57	60.001000000	192.168.56.10	192.168.56.21	OPTIONS		sip:1001@192.168.56.21:5060		9f20c1ab	1001		7e3b1c55-0a2d-4f6e-8b91-c4d2e0f7a613	31545	OPTIONS	z9hG4bKPj77a2				Asterisk PBX 20.9.3				
+58	60.007000000	192.168.56.21	192.168.56.10		200			9f20c1ab	1001	qL0v3s	7e3b1c55-0a2d-4f6e-8b91-c4d2e0f7a613	31545	OPTIONS	z9hG4bKPj77a2								

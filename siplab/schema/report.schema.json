@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siplab.local/schema/report.schema.json",
+  "title": "SIPLab Consolidated Report",
+  "description": "The orchestrator's REPORT object. It carries every skill finding unchanged, the overall verdict computed by the rule in boot/boot.md Block 3, coverage and gaps kept separate from the verdict (coverage-honest verdicts, PROMPTARCH APR-024), conflicts, and a strict split between deterministic facts and AI interpretation.",
+  "type": "object",
+  "required": [
+    "test_id",
+    "overall_verdict",
+    "overall_failure_stage",
+    "coverage",
+    "gaps",
+    "summary",
+    "plan",
+    "findings",
+    "conflicts",
+    "facts",
+    "interpretation",
+    "next_check"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "test_id": { "type": "string", "minLength": 1 },
+    "overall_verdict": {
+      "type": "string",
+      "enum": ["pass", "fail", "insufficient_evidence"]
+    },
+    "overall_failure_stage": {
+      "$ref": "finding.schema.json#/properties/failure_stage"
+    },
+    "coverage": {
+      "type": "string",
+      "enum": ["complete", "partial"],
+      "description": "complete: every planned skill returned a usable finding and every focus tag had a registered skill. Derived from the recorded gaps, never self-reported."
+    },
+    "gaps": {
+      "type": "array",
+      "description": "Recorded facts about what was not examined, each with the action that would close it.",
+      "items": {
+        "type": "object",
+        "required": ["kind", "fact", "closing_action"],
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": ["placeholder", "not_pasted", "invalid_finding", "operator_report", "no_skill_for_focus"]
+          },
+          "skill": { "type": "string", "pattern": "^[0-9]{2}-[a-z0-9-]+$" },
+          "fact": { "type": "string", "minLength": 1 },
+          "closing_action": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "summary": { "type": "string", "minLength": 1, "maxLength": 200 },
+    "plan": {
+      "type": "array",
+      "description": "Skills in the approved plan, in dispatch order, e.g. ['01-registration', '02-call-flow'].",
+      "items": { "type": "string", "pattern": "^[0-9]{2}-[a-z0-9-]+$" }
+    },
+    "findings": {
+      "type": "array",
+      "description": "Every usable finding returned by an implemented skill, unchanged.",
+      "items": { "$ref": "finding.schema.json" }
+    },
+    "conflicts": {
+      "type": "array",
+      "description": "Disagreements between findings, listed, never resolved silently.",
+      "items": {
+        "type": "object",
+        "required": ["skills", "description"],
+        "additionalProperties": false,
+        "properties": {
+          "skills": {
+            "type": "array",
+            "minItems": 2,
+            "items": { "type": "string", "pattern": "^[0-9]{2}-[a-z0-9-]+$" }
+          },
+          "description": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "facts": {
+      "type": "array",
+      "description": "Deterministic facts: the evidence items the overall verdict rests on, copied unchanged from the findings.",
+      "items": { "$ref": "finding.schema.json#/properties/evidence/items" }
+    },
+    "interpretation": {
+      "type": "string",
+      "minLength": 1,
+      "description": "AI interpretation, labeled as such. Suspected causes are marked as suspected."
+    },
+    "next_check": { "type": ["string", "null"] }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "overall_verdict": { "const": "pass" } } },
+      "then": {
+        "properties": {
+          "overall_failure_stage": { "const": "none" },
+          "coverage": { "const": "complete" }
+        }
+      },
+      "else": { "properties": { "overall_failure_stage": { "not": { "const": "none" } } } }
+    },
+    {
+      "if": { "properties": { "coverage": { "const": "complete" } } },
+      "then": { "properties": { "gaps": { "maxItems": 0 } } },
+      "else": { "properties": { "gaps": { "minItems": 1 } } }
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+# Ground truth — schema: siplab/schema/truth.schema.json
+# NEVER paste this file into the chat. It is used only to score the consolidated report.
+test_id: registration-not-captured
+verdict: insufficient_evidence
+failure_stage: unknown
+basis: The table holds only OPTIONS keep-alives (frames 1, 2, 57, 58); no REGISTER was captured.
+decisive_frames: []
+expected_skills:
+- 01-registration

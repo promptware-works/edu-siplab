@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siplab.local/schema/finding.schema.json",
+  "title": "SIPLab Shared Finding",
+  "description": "Mandatory 10-key envelope that every protocol skill emits. Skills may add skill-specific keys after the shared ones; they may not omit any shared key. See boot/boot.md Block 2 for the prose contract.",
+  "type": "object",
+  "required": [
+    "skill",
+    "test_id",
+    "summary",
+    "verdict",
+    "failure_stage",
+    "confidence",
+    "evidence",
+    "rfc_ref",
+    "next_check",
+    "rationale"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "skill": {
+      "type": "string",
+      "pattern": "^[0-9]{2}-[a-z0-9-]+$",
+      "description": "Catalogue number and short name, e.g. '01-registration'."
+    },
+    "test_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The test_id of the analyzed test case."
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160,
+      "description": "One sentence: what the skill concluded."
+    },
+    "verdict": {
+      "type": "string",
+      "enum": ["pass", "fail", "insufficient_evidence"],
+      "description": "Whether the SIP procedure under test completed successfully (pass), did not complete (fail), or cannot be decided from the evidence table (insufficient_evidence)."
+    },
+    "failure_stage": {
+      "type": "string",
+      "enum": [
+        "none",
+        "transport",
+        "registration",
+        "authentication",
+        "routing",
+        "call_setup",
+        "media_negotiation",
+        "media_path",
+        "teardown",
+        "messaging",
+        "unknown"
+      ],
+      "description": "Where observed behavior departs from expected behavior. 'none' exactly when verdict is 'pass'."
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "evidence": {
+      "type": "array",
+      "description": "Observations only, copied from the evidence table. Every item must exist in the table (checked by tools/validate_evidence.py).",
+      "items": {
+        "type": "object",
+        "required": ["frame", "field", "value"],
+        "additionalProperties": false,
+        "properties": {
+          "frame": { "type": "integer", "minimum": 1 },
+          "field": { "type": "string", "minLength": 1 },
+          "value": { "type": "string" }
+        }
+      }
+    },
+    "rfc_ref": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Specification references, e.g. 'RFC 3261 §22.2'."
+    },
+    "next_check": {
+      "type": ["string", "null"],
+      "description": "One suggested manual check, or null. Never an automatic action."
+    },
+    "rationale": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Why the verdict was reached: observations, expected behavior, and any suspected cause explicitly labeled as suspected."
+    },
+    "placeholder": {
+      "type": "boolean",
+      "description": "Optional. true only in the fixed reply of an unimplemented placeholder skill. The orchestrator treats such findings as skipped."
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "verdict": { "const": "pass" } } },
+      "then": { "properties": { "failure_stage": { "const": "none" } } },
+      "else": { "properties": { "failure_stage": { "not": { "const": "none" } } } }
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+# Test case (AI input) — schema: siplab/schema/test-case.schema.json
+test_id: registration-not-captured
+title: Registration check on a capture started after the client registered
+objective: Evaluate the registration of user 1001 from a capture that only contains PBX keep-alive requests.
+focus:
+- registration
+endpoints:
+- user: '1001'
+  device: Linphone desktop
+  address: 192.168.56.21
+  role: registrant
+pbx:
+  software: Asterisk 20.9.3 (PJSIP)
+  address: 192.168.56.10
+  notes: Endpoints authenticate REGISTER and INVITE with digest (MD5). Media is anchored at the PBX. Calls
+    to configured but unregistered endpoints are answered with 480 Temporarily Unavailable.
+preconditions:
+- Client 1001 was started before the capture
+steps:
+- Start the capture
+- Wait one minute
+- Stop the capture
+expected_observations:
+- The REGISTER of 1001 is accepted with 200
+observed_by_tester:
+- Client 1001 showed 'registered'
+capture:
+  file: registration-not-captured.pcapng
+  transport: udp
+  recipe: reference
+  synthetic: true

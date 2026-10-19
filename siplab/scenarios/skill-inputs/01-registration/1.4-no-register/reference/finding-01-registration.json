@@ -1,0 +1,28 @@
+{
+  "skill": "01-registration",
+  "test_id": "registration-not-captured",
+  "summary": "No REGISTER transaction is in the capture; registration cannot be judged.",
+  "verdict": "insufficient_evidence",
+  "failure_stage": "unknown",
+  "confidence": 0.6,
+  "evidence": [],
+  "rfc_ref": [
+    "RFC 3261 §10.2"
+  ],
+  "next_check": "Restart the capture before starting client 1001, or force a re-registration on the client.",
+  "rationale": "The table holds only OPTIONS requests from the PBX and their 200 responses (frames 1, 2, 57, 58). No REGISTER rows exist for user 1001, so the registration outcome is not observable. The tester's observation 'registered' is not packet evidence.",
+  "registrations": [
+    {
+      "user": "1001",
+      "call_id": null,
+      "request_frames": [],
+      "challenge_frames": [],
+      "final_frame": null,
+      "final_status": null,
+      "credentials_sent": false,
+      "digest_algorithm": null,
+      "granted_expires": null,
+      "outcome": "not_observed"
+    }
+  ]
+}

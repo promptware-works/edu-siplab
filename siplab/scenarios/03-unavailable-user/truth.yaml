@@ -1,0 +1,12 @@
+# Ground truth — schema: siplab/schema/truth.schema.json
+# NEVER paste this file into the chat. It is used only to score the consolidated report.
+test_id: call-to-unregistered-user
+verdict: fail
+failure_stage: routing
+basis: Credentialed INVITE (frame 33) answered with 480 Temporarily Unavailable (frame 35); 1003 not registered.
+decisive_frames:
+- 33
+- 35
+expected_skills:
+- 01-registration
+- 02-call-flow

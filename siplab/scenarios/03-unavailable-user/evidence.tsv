@@ -1,0 +1,12 @@
+frame.number	frame.time_relative	ip.src	ip.dst	sip.Method	sip.Status-Code	sip.r-uri	sip.from.user	sip.from.tag	sip.to.user	sip.to.tag	sip.Call-ID	sip.CSeq.seq	sip.CSeq.method	sip.Via.branch	sip.Expires	sip.auth.username	sip.auth.algorithm	sip.User-Agent	sdp.connection_info.address	sdp.media.media	sdp.media.port	sdp.media.format
+1	0.000000000	192.168.56.21	192.168.56.10	REGISTER		sip:192.168.56.10	1001	aR2mz7	1001		Qx81vN3pTa	20	REGISTER	z9hG4bK.Pn5yH1	3600			Linphone-Desktop/5.2.6 (macOS) LinphoneSDK/5.3.72				
+2	0.003000000	192.168.56.10	192.168.56.21		401		1001	aR2mz7	1001	e21b9a04	Qx81vN3pTa	20	REGISTER	z9hG4bK.Pn5yH1			MD5					
+3	0.047000000	192.168.56.21	192.168.56.10	REGISTER		sip:192.168.56.10	1001	aR2mz7	1001		Qx81vN3pTa	21	REGISTER	z9hG4bK.Pn5yH2	3600	1001	MD5	Linphone-Desktop/5.2.6 (macOS) LinphoneSDK/5.3.72				
+4	0.051000000	192.168.56.10	192.168.56.21		200		1001	aR2mz7	1001	c77f0d13	Qx81vN3pTa	21	REGISTER	z9hG4bK.Pn5yH2	3600							
+30	8.502000000	192.168.56.21	192.168.56.10	INVITE		sip:1003@192.168.56.10	1001	c3Dw5e	1003		Rt6yU2iOp8	101	INVITE	z9hG4bK.Cd01				Linphone-Desktop/5.2.6 (macOS) LinphoneSDK/5.3.72	192.168.56.21	audio	7078	ITU-T G.711 PCMU;ITU-T G.711 PCMA;DynamicRTP-Type-101
+31	8.505000000	192.168.56.10	192.168.56.21		401		1001	c3Dw5e	1003	0d9e4c71	Rt6yU2iOp8	101	INVITE	z9hG4bK.Cd01			MD5					
+32	8.507000000	192.168.56.21	192.168.56.10	ACK		sip:1003@192.168.56.10	1001	c3Dw5e	1003	0d9e4c71	Rt6yU2iOp8	101	ACK	z9hG4bK.Cd01				Linphone-Desktop/5.2.6 (macOS) LinphoneSDK/5.3.72				
+33	8.551000000	192.168.56.21	192.168.56.10	INVITE		sip:1003@192.168.56.10	1001	c3Dw5e	1003		Rt6yU2iOp8	102	INVITE	z9hG4bK.Cd02		1001	MD5	Linphone-Desktop/5.2.6 (macOS) LinphoneSDK/5.3.72	192.168.56.21	audio	7078	ITU-T G.711 PCMU;ITU-T G.711 PCMA;DynamicRTP-Type-101
+34	8.554000000	192.168.56.10	192.168.56.21		100		1001	c3Dw5e	1003		Rt6yU2iOp8	102	INVITE	z9hG4bK.Cd02								
+35	8.561000000	192.168.56.10	192.168.56.21		480		1001	c3Dw5e	1003	b81e6d2a-90fc	Rt6yU2iOp8	102	INVITE	z9hG4bK.Cd02								
+36	8.563000000	192.168.56.21	192.168.56.10	ACK		sip:1003@192.168.56.10	1001	c3Dw5e	1003	b81e6d2a-90fc	Rt6yU2iOp8	102	ACK	z9hG4bK.Cd02				Linphone-Desktop/5.2.6 (macOS) LinphoneSDK/5.3.72				
