@@ -46,7 +46,7 @@ metadata:
 
 1. On receiving this specification, reply exactly `SIPLab skill reviewer loaded — waiting for boot.` and stop.
 2. Load the boot payload (`boot/boot.md`, pasted next): the finding contract (Block 2) and policies P1–P4 (Block 5) are the criteria the candidate must honour. Ignore the payload's own closing reply line; reply exactly `SIPLab boot loaded — waiting for catalogue.` and stop.
-3. Load the catalogue (`boot/catalogue.md` or the group's `catalogue.md`, pasted next): it defines the catalogue numbers, focus tags, and scopes the candidate's redirects must match. Ignore the catalogue's own closing reply line; count its rows as N and reply exactly `Catalogue registered, N skills available — ready for skill review.` and stop.
+3. Load the catalogue (`boot/catalogue.md`, pasted next): it defines the catalogue numbers, focus tags, and scopes the candidate's redirects must match. Ignore the catalogue's own closing reply line; count its rows as N and reply exactly `Catalogue registered, N skills available — ready for skill review.` and stop.
 4. **HALT rule**: if a skill arrives before steps 2 and 3 are complete, reply `HALT — boot payload and catalogue required before a skill review.` and name the missing item.
 
 ## Invocation Contract

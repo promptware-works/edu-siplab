@@ -1,14 +1,13 @@
 ---
-description: "Print a SIPLab skill body verbatim for dispatch (usage: /siplab-skill <N> [group catalogue path])"
-argument-hint: <skill number, e.g. 1> [path to a group catalogue.md]
+description: "Print a SIPLab skill body verbatim for dispatch (usage: /siplab-skill <N>)"
+argument-hint: <skill number, e.g. 1>
 allowed-tools: Read, Glob
 ---
 
 The operator wants to dispatch SIPLab skill **#$ARGUMENTS**.
 
-1. Resolve the prompt file: if a group catalogue path is given, take the
-   *Prompt file* of row #N from it; otherwise use `siplab/skills/<NN>-*/SKILL.md`
-   (two-digit, zero-padded, e.g. `1` → `siplab/skills/01-registration/SKILL.md`).
+1. Resolve the prompt file `siplab/skills/<NN>-*/SKILL.md` (two-digit,
+   zero-padded, e.g. `1` → `siplab/skills/01-registration/SKILL.md`).
 2. Output the file's **body** — everything below its closing frontmatter `---`
    line — **verbatim**, inside a fenced block, so the operator can paste it.
 3. Do **not** execute the skill, produce a finding, or invent input. After

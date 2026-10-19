@@ -1,6 +1,6 @@
 # <Report title>
 
-**Group:** <GG> — <group name>
+**Group:** <group name>
 **Members:** <names>
 
 ## Abstract

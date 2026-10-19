@@ -1,6 +1,6 @@
 ---
 name: siplab-catalogue
-description: Skill registry of the SIPLab AI SIP Test Engineer, pasted after the boot payload. Lists the ten protocol skills the orchestrator may dispatch, with focus tag, scope, evidence recipe, skill-specific output keys, implementation status, and prompt file. Groups copy it to groups/<GG>-<group-name>/catalogue.md and update the status of the skills they implement.
+description: Skill registry of the SIPLab AI SIP Test Engineer, pasted after the boot payload. Lists the ten protocol skills the orchestrator may dispatch, with focus tag, scope, evidence recipe, skill-specific output keys, implementation status, and prompt file. In its private copy of the repository, a group sets the status of every skill it implements to implemented.
 metadata:
   core:
     classification:
@@ -20,7 +20,6 @@ metadata:
 
 > **Paste this body third**, after the orchestrator specification and the
 > boot payload. It registers the skills the orchestrator may dispatch.
-> Groups paste their own `catalogue.md` instead.
 
 This catalogue is read-only data for the orchestrator. Each row states what a
 skill covers, which focus tag selects it, which evidence recipe it needs, the
@@ -46,8 +45,9 @@ and which file the operator pastes when it is dispatched.
 - The orchestrator selects skills by focus tag only (orchestrator *Routing & Method*).
 - `placeholder` skills are planned and dispatched like any other; their fixed
   reply becomes a coverage gap, so a test that needs them can never report `pass`.
-- When a group implements a skill, it sets the status to `implemented` and the
-  prompt file to its own path, e.g. `groups/07-voiplab/skills/02-call-flow/SKILL.md`.
+- When a group implements a skill in its own repository, it edits the skill
+  file in place and sets the skill's status here to `implemented`; the prompt
+  file path does not change.
 - Two-digit, zero-padded folder names keep alphabetical order equal to dispatch order.
 - No skill has side effects (boot Policy P3).
 

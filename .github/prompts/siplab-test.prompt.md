@@ -4,7 +4,7 @@ description: Build the SIPLab operator test message from a scenario folder or a 
 ---
 
 Build the operator test message. Ask for a scenario folder (e.g.
-`siplab/scenarios/02-auth-failure`) or a corpus path and test-id if not supplied.
+`siplab/scenarios/02-auth-failure`) or a corpus test (e.g. `deliverables/corpus/basic-call`) if not supplied.
 
 1. Read the test case (`test-case.yaml` or `<test-id>.test.yaml`) and the
    evidence table (`evidence.tsv` or `<test-id>.evidence.tsv`); include

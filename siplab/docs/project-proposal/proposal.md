@@ -146,7 +146,8 @@ subject of phase 3 is AI-assisted engineering, the policy is about
 - **Permitted.** Using Copilot Chat, Claude Code, or other assistants to
   research, configure, troubleshoot, draft, critique, and stress-test your
   own work.
-- **Not permitted.** Submitting another group's work; copying prompts or
+- **Not permitted.** Making the group's repository public or giving another
+  group access to it before final grading; submitting another group's work; copying prompts or
   configurations from public sources without citation; pasting a single
   zero-shot generation as a final skill prompt without iteration; reporting
   AI-generated claims about your own captures that the group has not
@@ -439,22 +440,19 @@ siplab/
 ├── docs/
 │   ├── project-proposal/             # proposal, delivery plan, test worksheet, glossary
 │   └── guides/reading-a-finding.md   # Annotated finding on synthetic data
-└── groups/
-    ├── _template/                    # Copy to start a group workspace
-    └── <GG>-<group-name>/            # One folder per group (see below)
 ```
 
-Each group works in its own folder:
+Next to `siplab/`, the repository has a top-level `deliverables/` folder.
+It holds empty templates here; each group fills it in its own copy of the
+repository (§ 3.8):
 
 ```text
-groups/<GG>-<group-name>/
+deliverables/
 ├── pbx/            # Sanitized configuration extracts (e.g. pjsip.conf, extensions.conf)
 ├── corpus/         # <test-id>.test.yaml, .truth.yaml, sanitized .pcapng, .evidence.tsv
-├── skills/         # The group's own skills: <NN>-<short-name>/SKILL.md
-├── catalogue.md    # The group's catalogue: statuses and prompt paths of the group's skills
 ├── tests/          # Per test: transcripts, saved reports, validator output
-├── spec.md         # One-page specification per group skill
-├── worksheet.md    # Filled test worksheet
+├── spec.md         # One-page specification per skill the group implements
+├── worksheet.md    # Filled test worksheet (copied from docs/project-proposal/)
 └── report.md       # The group report (§ 5.1)
 ```
 
@@ -462,7 +460,7 @@ groups/<GG>-<group-name>/
 > used for onboarding and cross-group grading; their evidence tables are
 > hand-built in the exact recipe format until instructor-recorded captures
 > replace them. Each group additionally builds its own labeled **corpus** from
-> its PBX. The instructor also keeps a **held-out corpus** with hidden labels
+> its PBX, in `deliverables/corpus/`. The instructor also keeps a **held-out corpus** with hidden labels
 > for the final evaluation; it is not in the repository.
 
 #### Symmetric initialization procedure (works in both environments)
@@ -470,7 +468,7 @@ groups/<GG>-<group-name>/
 1. Open the repository in the IDE (VS Code for Copilot, or Claude Code).
 2. Start a fresh chat session.
 3. Paste the body of `agents/sip-test-engineer.agent.md`, then of
-   `boot/boot.md`, then of the group's `catalogue.md`. After each, the
+   `boot/boot.md`, then of `boot/catalogue.md`. After each, the
    assistant gives its readiness reply (§ 3.7).
 4. Paste a test message.
 5. The orchestrator produces a numbered **PLAN** and waits for `approve` /
@@ -487,10 +485,10 @@ This paste-driven flow uses only **chat as runtime** — no MCP, no
 | Environment | Wrapper | Effect |
 | --- | --- | --- |
 | Claude Code | `/siplab-init` (`.claude/commands/`, also a skill in `.claude/skills/`) | Loads orchestrator, boot payload, and catalogue |
-| Claude Code | `/siplab-catalogue [path]` | Registers the default or a group catalogue |
-| Claude Code | `/siplab-skill <N> [catalogue]` | Prints a skill body verbatim for dispatch |
+| Claude Code | `/siplab-catalogue` | Re-registers the catalogue, e.g. after a status change |
+| Claude Code | `/siplab-skill <N>` | Prints a skill body verbatim for dispatch |
 | Claude Code | `/siplab-test <scenario or corpus test>` | Builds the test message — never includes a truth file |
-| Claude Code | `/siplab-governance <SKILL.md> [catalogue]` (also a skill) | Runs the linter, then the skill reviewer (§ 4.1) |
+| Claude Code | `/siplab-governance <SKILL.md>` (also a skill) | Runs the linter, then the skill reviewer (§ 4.1) |
 | Copilot Chat | `.github/prompts/siplab-*.prompt.md` | The same five helpers as prompt files |
 | Copilot Chat | `.github/agents/siplab-orchestrator.agent.md`, `.github/chatmodes/…` | Starts a chat as the orchestrator |
 | Copilot Chat | `.github/agents/siplab-governance.agent.md` | Starts a chat as the skill reviewer |
@@ -525,6 +523,48 @@ bring-up runs is set in [`delivery-plan.md`](./delivery-plan.md).
    `insufficient_evidence` and one `placeholder` gap for skill #2 — the
    correct, coverage-honest result while #2 is a placeholder. Run the
    validator on each report and save the transcripts.
+
+### 3.8 Team repositories
+
+`edu-siplab` is the instructor's reference and skeleton: only the instructor
+changes it. Each group works in its **own private copy** of it, created at
+kickoff from the current release on `main`:
+
+```bash
+git clone --branch main https://github.com/promptware-works/edu-siplab.git siplab-<group-name>
+cd siplab-<group-name>
+git remote rename origin upstream                    # the instructor's repository, read-only
+git remote add origin <URL of the group's new, empty, private repository>
+git push -u origin main
+```
+
+Do **not** use GitHub's *Fork* button: a fork of a public repository is
+public, so every other group could read your skills, captures, and report.
+The copy above is private and keeps the history, so instructor updates merge
+cleanly.
+
+**What a group may change.**
+
+| Path | Group may change it? |
+| --- | --- |
+| `deliverables/` | **Yes** — every group deliverable (§ 5.1, `deliverables/README.md`) |
+| `siplab/skills/<NN>-…/SKILL.md` of the skills the group implements | **Yes** — implemented in place (§ 4) |
+| `siplab/boot/catalogue.md` | **Only** the *Status* column of the group's skills |
+| Everything else — `siplab/agents/`, `boot/boot.md`, `schema/`, `tools/`, `scenarios/`, `docs/`, wrappers | **No** — instructor-owned; the grader checks that the diff against `upstream` is empty here |
+
+**Instructor updates.** The instructor publishes fixes as tagged releases on
+`main` of `edu-siplab` and announces them. Groups merge them with
+`git pull upstream main`; conflicts can only arise in files the group may change.
+
+**Access and submission.** At kickoff, the group invites the instructor to its
+private repository with read access. Each submission is a tag on the group's
+repository (`ms01`, `ms02`, `ms03`, or the checkpoint tags of the chosen
+timeline, [`delivery-plan.md`](./delivery-plan.md)), pushed before the
+deadline with `git push origin <tag>`. When repository access is impossible,
+the group sends a `git bundle` instead
+(`git bundle create siplab-<group-name>-<tag>.bundle --all`); a zip file is
+accepted only if it contains the `.git` folder, because the history documents
+who contributed what.
 
 ---
 
@@ -577,8 +617,9 @@ A blank skeleton lives at
 [`skills/_template/SKILL.md`](../../skills/_template/SKILL.md). Every
 placeholder skill (`02`–`10`) is already in ASPECT-S form, with scope, inputs,
 RFC pointers, hints, and its worksheet checks pre-filled. To implement one,
-copy it into `groups/<GG>-<group-name>/skills/<NN>-<short-name>/SKILL.md`,
-delete its *Placeholder Reply* section, and complete every TODO. The single
+edit it in place in the group's repository (§ 3.8): delete its *Placeholder
+Reply* section, complete every TODO, and set its status to `implemented` in
+the frontmatter and in `boot/catalogue.md`. The single
 complete worked example is
 [`skills/01-registration/SKILL.md`](../../skills/01-registration/SKILL.md).
 
@@ -590,7 +631,7 @@ or grade.
 
 | Tier | Tool | Checks |
 | --- | --- | --- |
-| 1 — deterministic | `python3 siplab/tools/lint_skill.py <SKILL.md> [--catalogue <catalogue.md>]` | L1 frontmatter · L2 sections and order · L3 status consistency (no placeholder, TODO, or authoring notes once implemented) · L4 scope redirects · L5 output keys · L6 verdict table · L7 stricter-mode elements · L8 portability · L9 catalogue alignment |
+| 1 — deterministic | `python3 siplab/tools/lint_skill.py <SKILL.md>` | L1 frontmatter · L2 sections and order · L3 status consistency (no placeholder, TODO, or authoring notes once implemented) · L4 scope redirects · L5 output keys · L6 verdict table · L7 stricter-mode elements · L8 portability · L9 catalogue alignment |
 | 2 — judgment | [`agents/skill-reviewer.agent.md`](../../agents/skill-reviewer.agent.md), in its own chat session | R1–R13: single procedure, scope boundaries, checklist, inputs, deterministic procedure, verdict table, output contract, untrusted input, coverage honesty, quality gates, portability, references |
 
 The reviewer is started like the orchestrator (reviewer → boot → catalogue)
@@ -613,7 +654,7 @@ checkpointed, the deliverable sizes, and the grade split are defined in
 | --- | --- | --- |
 | **P1** | **Install & Configure the SIP PBX** | Running PBX reachable from the client network; all required users, the administrator, telephony, and messaging configured; clients registered; system and network diagram; component inventory with software versions; sanitized configuration extracts; reproducible setup notes. A completed call is not required to finish P1. |
 | **P2** | **Test & Verify the SIP PBX** | Mobile-to-desktop and mobile-to-mobile calls with two-way audio and clean teardown; one voice session per user; messaging between users; at least one failed or rejected call; captured and explained registration, call setup, teardown, and messaging flows compared with the RFCs; a core test table (preconditions, steps, expected, observed, pass/fail); the group's **labeled capture corpus** with test cases and evidence tables; the group's **skill selection and `spec.md`**. All P2 tests run without the AI SIP Test Engineer. |
-| **P3** | **Build, Integrate & Evaluate the AI SIP Test Engineer** | The group's ASPECT-S skills (call flow plus electives, § 7.1), registered in the group catalogue and dispatched by the orchestrator; paired Copilot Chat / Claude Code transcripts; validator results; evaluation against the group corpus and the instructor's held-out corpus; the filled [`test-worksheet.md`](./test-worksheet.md); the final `report.md`; a live demonstration (PBX first, AI second) and group defense. |
+| **P3** | **Build, Integrate & Evaluate the AI SIP Test Engineer** | The group's ASPECT-S skills (call flow plus electives, § 7.1), marked `implemented` in the catalogue and dispatched by the orchestrator; paired Copilot Chat / Claude Code transcripts; validator results; evaluation against the group corpus and the instructor's held-out corpus; the filled [`test-worksheet.md`](./test-worksheet.md); the final `report.md`; a live demonstration (PBX first, AI second) and group defense. |
 
 **Gate P2 → P3.** The core checks in the test worksheet marked *gate* must
 pass. The AI phase analyzes the group's own working PBX; it cannot
@@ -621,7 +662,7 @@ compensate for a PBX that does not work.
 
 ### 5.1 The group report (`report.md`)
 
-One report per group, in markdown, committed to the group folder. It
+One report per group, in markdown, committed as `deliverables/report.md`. It
 follows the structure below and covers the project description, the
 test environment, the test results, and the evaluation:
 
@@ -718,9 +759,10 @@ are in [`test-worksheet.md`](./test-worksheet.md).
 > [`agents/sip-test-engineer.agent.md`](../../agents/sip-test-engineer.agent.md).
 > Skills #2–#10 ship as runnable placeholders: each returns a fixed
 > placeholder finding, so the whole pipeline runs from day one and every
-> unimplemented skill shows up as a coverage gap. Groups register their skills
-> in their own `catalogue.md` but do not need to modify the orchestrator. A group may propose an improved orchestrator as
-> additional work, assessed under D7.
+> unimplemented skill shows up as a coverage gap. Groups mark the skills
+> they implement in `boot/catalogue.md` and never modify the orchestrator
+> (§ 3.8). A group may propose an improved orchestrator as additional work,
+> as a separate file under `deliverables/`, assessed under D7.
 
 ### 7.1 Selection rules
 

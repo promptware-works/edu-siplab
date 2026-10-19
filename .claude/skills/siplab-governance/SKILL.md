@@ -9,9 +9,9 @@ This is a **thin wrapper**. The canonical reviewer lives at
 `siplab/agents/skill-reviewer.agent.md`; if this wrapper disagrees with it,
 the file wins. Use only the body of each prompt file.
 
-1. Run `python3 siplab/tools/lint_skill.py <SKILL.md> [--catalogue <catalogue.md>]`
+1. Run `python3 siplab/tools/lint_skill.py <SKILL.md>`
    on the skill the user names and keep the output.
-2. Load, in order, the reviewer, `siplab/boot/boot.md`, and the catalogue,
+2. Load, in order, the reviewer, `siplab/boot/boot.md`, and `siplab/boot/catalogue.md`,
    giving each readiness reply defined by the reviewer's Session Bootstrap.
 3. Submit `SKILL UNDER REVIEW` + the skill body + `LINT REPORT` + the lint
    output, and return the reviewer's REVIEW.

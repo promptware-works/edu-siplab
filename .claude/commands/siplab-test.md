@@ -1,6 +1,6 @@
 ---
 description: "Build the SIPLab operator test message from a test case and an evidence table (usage: /siplab-test <scenario folder or corpus path + test-id>)"
-argument-hint: <e.g. siplab/scenarios/02-auth-failure | siplab/groups/07-voiplab/corpus/basic-call>
+argument-hint: <e.g. siplab/scenarios/02-auth-failure | deliverables/corpus/basic-call>
 allowed-tools: Read, Glob
 ---
 

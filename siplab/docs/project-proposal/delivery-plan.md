@@ -42,7 +42,7 @@ system, the skill contract, or the pass bar.
 | Injection case | Group-authored | One common case, instructor-provided (`scenarios/04-prompt-injection`) |
 | Final report (`report.md`) | 4,000–6,000 words | 2,500–3,500 words |
 | Defense | ≤ 20 min per group (10 min demo, 10 min Q&A) | ≤ 12 min per group (6 min demo, 6 min Q&A) |
-| Submission workflow | One PR per milestone | One draft PR, labeled per checkpoint |
+| Submission | One tag per milestone (`ms01`–`ms03`) in the group's private repository | Checkpoint tags `cp1`, `cp2` (formative) and a final tag `final` |
 | Advanced skills #9, #10 | Allowed as electives | Discouraged |
 
 > The **evaluation dimension weights** D1–D8 are identical in both variants —
@@ -73,10 +73,10 @@ Before P1, each group agrees its scope and setup:
 
 | Exit condition |
 | --- |
-| Group formed (max. 3 students) and registered with a group number `<GG>` |
+| Group formed (max. 3 students) and registered with the instructor |
 | Short requirements list and proposed topology (server, devices, network) |
 | Chosen PBX, clients, and capture setup |
-| Group folder `groups/<GG>-<group-name>/` created on the group branch |
+| Private group repository created from `edu-siplab`, instructor invited with read access (proposal § 3.8) |
 
 ---
 
@@ -92,12 +92,17 @@ in Week 3; each member's two transcripts are the readiness deliverable.
 
 ### Submission workflow
 
-- Each group works on a branch `group/<GG>-<group-name>` off the classroom
-  repository, inside `groups/<GG>-<group-name>/`.
-- Every milestone closes with a pull request to `main` containing exactly
-  that milestone's deliverables.
-- The grader leaves milestone-scoped review comments; the group resolves
-  them before the next milestone opens.
+- Each group works in its private copy of `edu-siplab` (proposal § 3.8).
+  Paths in the deliverables below are inside `deliverables/`, except the
+  skills (`siplab/skills/`) and the catalogue (`siplab/boot/catalogue.md`).
+- Every milestone closes with a tag on the group's repository — `ms01`,
+  `ms02`, `ms03` — pushed before the deadline. The tagged commit is the
+  submission; later commits are not graded for that milestone.
+- The grader reviews the tagged state and sends milestone-scoped feedback
+  (e.g. as issues in the group's repository); the group resolves it before
+  the next milestone opens.
+- Without repository access, the group sends a `git bundle` of the tagged
+  state instead (proposal § 3.8).
 - Late submissions follow the course's standard late policy.
 
 ### Milestone 1 — Install & Configure the SIP PBX (Weeks 1–2) — *covers phase P1*
@@ -160,8 +165,8 @@ without the AI SIP Test Engineer.
 #### Activities — Weeks 5–6
 
 - Implement the group's skills in ASPECT-S, starting from their runnable
-  placeholders under `siplab/skills/`; register them as `implemented` in the
-  group `catalogue.md`.
+  placeholders under `siplab/skills/`; mark them as `implemented` in
+  `siplab/boot/catalogue.md`.
 - Run every corpus case through the orchestrator in **both** Copilot Chat
   and Claude Code; save paired transcripts; run the validator on every
   consolidated report.
@@ -179,7 +184,7 @@ without the AI SIP Test Engineer.
 
 #### Deliverables (end of Week 6)
 
-- Final skills (`skills/<NN>-<short-name>/SKILL.md`) and `catalogue.md`.
+- Final skills (`siplab/skills/<NN>-<short-name>/SKILL.md`) and `siplab/boot/catalogue.md`.
 - `tests/` with paired transcripts and validator output per case.
 - Filled `worksheet.md` (universal, per-skill, cross-environment, and
   integration checks).
@@ -211,11 +216,11 @@ arrive with their topology and devices ready.
 
 ### Submission workflow
 
-- One branch `group/<GG>-<group-name>` and **one draft PR** opened in Week 1.
-- Each checkpoint is a labeled commit on that PR (`checkpoint-1`,
-  `checkpoint-2`); the grader comments on the PR.
-- The PR is marked ready for review at the end of Week 3 and merged after
-  grading.
+- Each group works in its private copy of `edu-siplab` (proposal § 3.8);
+  paths are as in the 6-week plan.
+- Each weekly checkpoint is a tag — `cp1`, `cp2` — that the grader reviews
+  for formative feedback.
+- The final submission is the tag `final`, pushed before the end of Week 3.
 
 ### Week 1 — Install, Configure & First Call — *covers phase P1, starts P2*
 
@@ -256,7 +261,7 @@ arrive with their topology and devices ready.
 
 #### Final deliverables (end of Week 3)
 
-- Final skills, `catalogue.md`, `tests/`, filled `worksheet.md`.
+- Final skills, `siplab/boot/catalogue.md`, `tests/`, filled `worksheet.md`.
 - `report.md`, 2,500–3,500 words.
 - Demonstration and defense.
 
@@ -308,7 +313,7 @@ schedule.
 **Budget guideline.** <Per-group or per-student budget for this timeline.>
 
 ### Submission workflow
-<Branch and PR conventions for this timeline.>
+<Tag conventions for this timeline.>
 
 ### <Period 1> — Install & Configure the SIP PBX — *covers phase P1*
 ### <Period 2> — Test & Verify the SIP PBX — *covers phase P2*

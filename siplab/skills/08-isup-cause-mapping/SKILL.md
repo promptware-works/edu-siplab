@@ -46,8 +46,8 @@ metadata:
 > TEST CASE, and nothing else.
 >
 > **Implementing this skill?** Delete this whole section, complete every TODO,
-> set `x-siplab.status` to `implemented` in the frontmatter and in your group
-> catalogue, and pass worksheet section F8.
+> set `x-siplab.status` to `implemented` in the frontmatter and in
+> `siplab/boot/catalogue.md`, and pass worksheet section F8.
 
 ```json
 {

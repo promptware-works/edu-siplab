@@ -1,11 +1,10 @@
 ---
 name: siplab-catalogue
-description: Register a SIPLab skill catalogue — the default siplab/boot/catalogue.md or a group's catalogue.md — with a running SIPLab orchestrator. Use when the user wants to load, switch, or re-register the skill catalogue. Thin wrapper.
+description: Re-register the SIPLab skill catalogue (siplab/boot/catalogue.md) with a running SIPLab orchestrator — e.g. after a skill's status changed. Thin wrapper.
 ---
 
 # SIPLab — Catalogue (skill wrapper)
 
-This is a **thin wrapper**. Read the catalogue the user names, or
-`siplab/boot/catalogue.md` by default; use only the body below its frontmatter;
-follow it exactly, including its readiness reply
+This is a **thin wrapper**. Read `siplab/boot/catalogue.md`, use only the body
+below its frontmatter, and follow it exactly, including its readiness reply
 `Catalogue registered, N skills available — ready for test case.`

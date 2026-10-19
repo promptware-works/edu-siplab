@@ -35,8 +35,9 @@ metadata:
 
 > **Authoring guide — delete every `>` block when you are done.**
 > This is the ASPECT-S skeleton (PROMPTARCH APR-001) for SIPLab protocol
-> skills. Copy it to `groups/<GG>-<group-name>/skills/<NN>-<short-name>/SKILL.md`,
-> or replace the placeholder file of your skill, and fill in every section.
+> skills. Your group implements a catalogue skill in place, by completing its
+> placeholder file `siplab/skills/<NN>-<short-name>/SKILL.md`; use this blank
+> skeleton only for a skill that has no placeholder yet. Fill in every section.
 > The complete worked example is
 > [`../01-registration/SKILL.md`](../01-registration/SKILL.md) — consult it
 > whenever a section below is unclear.

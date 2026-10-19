@@ -17,7 +17,7 @@ its skills, and give graders an identical checklist to score against.
   [How to Read a Finding](../guides/reading-a-finding.md) first — it annotates
   the 10-key schema and checks U1–U7 on synthetic, non-graded data.
 - **One worksheet per group.** Copy this file to
-  `groups/<GG>-<group-name>/worksheet.md`. Fill Part A for the PBX, Parts B
+  `deliverables/worksheet.md` in your group's repository. Fill Part A for the PBX, Parts B
   and C once **per authored skill**, Part D once for the integrated
   orchestrator, and Part E for the corpus. Keep only the Part F sections for
   the skills your group authored.
@@ -32,7 +32,7 @@ its skills, and give graders an identical checklist to score against.
 - **Only authored skills are graded.** Placeholder skills appear in reports
   as coverage gaps; they are not filled in Parts B, C, and F.
 - **Self-check your skills before submitting.** Run the linter
-  (`python3 siplab/tools/lint_skill.py <SKILL.md> --catalogue <your catalogue.md>`)
+  (`python3 siplab/tools/lint_skill.py siplab/skills/<NN>-<short-name>/SKILL.md`)
   and the advisory skill reviewer
   ([`agents/skill-reviewer.agent.md`](../../agents/skill-reviewer.agent.md),
   `/siplab-governance` in Claude Code) to catch structure, scope, and contract
@@ -85,8 +85,8 @@ Every finding must validate against `schema/finding.schema.json`.
 
 | Environment | Transcript files | All Pass checks hold? | Same verdict and failure stage as the other environment on every case? |
 | --- | --- | --- | --- |
-| GitHub Copilot Chat | `tests/<test-id>/copilot.md` | ☐ | ☐ |
-| Claude Code | `tests/<test-id>/claude.md` | ☐ | ☐ |
+| GitHub Copilot Chat | `deliverables/tests/<test-id>/copilot.md` | ☐ | ☐ |
+| Claude Code | `deliverables/tests/<test-id>/claude.md` | ☐ | ☐ |
 
 > "Materially consistent" = same verdict, same failure stage, and the same
 > key frames cited; wording and confidence may differ. A different verdict

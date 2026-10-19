@@ -14,7 +14,7 @@ and follow them; do not summarise or change their behaviour. Use only the
    reply `SIPLab skill reviewer loaded — waiting for boot.`
 2. [`siplab/boot/boot.md`](../../siplab/boot/boot.md) —
    reply `SIPLab boot loaded — waiting for catalogue.`
-3. [`siplab/boot/catalogue.md`](../../siplab/boot/catalogue.md) (or the group catalogue the operator names) —
+3. [`siplab/boot/catalogue.md`](../../siplab/boot/catalogue.md) —
    reply `Catalogue registered, N skills available — ready for skill review.`
 
 Then wait for a message starting with `SKILL UNDER REVIEW` (optionally

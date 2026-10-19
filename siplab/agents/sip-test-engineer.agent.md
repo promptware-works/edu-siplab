@@ -51,7 +51,7 @@ metadata:
 
 1. On receiving this specification, reply exactly `SIP Test Engineer orchestrator loaded — waiting for boot.` and stop.
 2. Load the boot payload (`boot/boot.md`, pasted next): Block 1 operator message format, Block 2 finding contract, Block 3 report contract and verdict rule, Block 4 operator vocabulary, Block 5 policies P1–P4. Reply exactly `SIPLab boot loaded — waiting for catalogue.` and stop.
-3. Load the skill catalogue (`boot/catalogue.md` or the group's `catalogue.md`, pasted next). Count its rows as N. Reply exactly `Catalogue registered, N skills available — ready for test case.` with N replaced by the number, and stop.
+3. Load the skill catalogue (`boot/catalogue.md`, pasted next). Count its rows as N. Reply exactly `Catalogue registered, N skills available — ready for test case.` with N replaced by the number, and stop.
 4. **HALT rule**: if a test message arrives before steps 2 and 3 are complete, reply `HALT — boot payload and catalogue required before a test case.` and name the missing item. Do not plan.
 
 ## Invocation Contract

@@ -29,7 +29,8 @@ precise, versioned, reviewable.
     the skill linter (governance tier 1).
   - `siplab/docs/project-proposal/` — proposal, delivery plan, test worksheet, glossary.
   - `siplab/docs/guides/` — teaching aids on synthetic data.
-  - `siplab/groups/` — one workspace per student group; `_template/` to copy.
+- **`deliverables/`** — empty templates for a group's deliverables. Groups fill
+  them in their own private copy of this repository, never here.
 - **Wrappers (convenience only): `.claude/` and `.github/`.** They load the
   canonical `siplab/` files and must never change their behaviour.
 
@@ -50,7 +51,7 @@ Chat is the runtime: no MCP, shell, or file changes during a run.
 ## Slash commands
 
 - `/siplab-init` — load orchestrator, boot payload, and catalogue.
-- `/siplab-catalogue [path]` — register the default or a group catalogue.
+- `/siplab-catalogue` — re-register the catalogue, e.g. after a status change.
 - `/siplab-skill <N> [catalogue]` — print a skill body verbatim for dispatch.
 - `/siplab-test <scenario folder | corpus path + test-id>` — build the test message.
 - `/siplab-governance <SKILL.md> [catalogue]` — lint a skill, then run the
@@ -64,6 +65,12 @@ user runs `/siplab-init` or explicitly asks to start SIPLab.
 
 ## Branching & release workflow
 
+This repository is the **instructor's skeleton**: only the instructor changes
+it. Student groups never push here — each group works in its own private
+copy (proposal § 3.8), with this repository as its `upstream` remote. Groups
+change only `deliverables/`, the skills they implement, and those skills'
+status in `siplab/boot/catalogue.md`.
+
 The canonical remote is **`promptware-works/edu-siplab`**. The default branch is
 **`develop`**; `main` is the release branch and changes reach it only through a
 pull request.
@@ -71,8 +78,9 @@ pull request.
 - **Never commit directly to `main`.**
 - Feature work: branch off `develop` (`feature/<short-name>` or
   `fix/<short-name>`), then merge back into `develop` by pull request.
-- Release: pull request `develop` → `main`, tag the merge commit on `main`,
-  fast-forward `develop` to `main`.
+- Release: pull request `develop` → `main`, tag the merge commit on `main`
+  (e.g. `v1.0.0` per cohort), fast-forward `develop` to `main`. Groups copy
+  from `main` and pull later releases from it.
 
 ## Rules when editing this repo
 

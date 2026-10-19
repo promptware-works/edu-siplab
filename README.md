@@ -27,6 +27,38 @@ unimplemented skill shows up as a coverage gap. The reference scenarios use
 hand-built evidence tables in the exact recipe format until
 instructor-recorded captures replace them.
 
+This repository is the **instructor's skeleton** and is changed only by the
+instructor. Student groups work in their own private copy.
+
+---
+
+## For student groups — start your repository
+
+Create a **private copy** at kickoff. Do not use GitHub's *Fork* button: a fork
+of a public repository is public, so other groups could read your work.
+
+```bash
+git clone --branch main https://github.com/promptware-works/edu-siplab.git siplab-<group-name>
+cd siplab-<group-name>
+git remote rename origin upstream                    # instructor's repository, read-only
+git remote add origin <URL of your new, empty, private repository>
+git push -u origin main
+```
+
+Then:
+
+- **Invite the instructor** to your repository with read access.
+- **Work only in** `deliverables/`, the skills you implement under
+  `siplab/skills/`, and their status in `siplab/boot/catalogue.md`. Everything
+  else belongs to the instructor.
+- **Submit** by pushing a tag per milestone: `git tag ms01 && git push origin ms01`.
+- **Get instructor updates** with `git pull upstream main`.
+- **No repository access possible?** Send a bundle instead:
+  `git bundle create siplab-<group-name>-ms01.bundle --all`.
+
+Details: [proposal § 3.8](siplab/docs/project-proposal/proposal.md#38-team-repositories)
+and the submission workflow in [`delivery-plan.md`](siplab/docs/project-proposal/delivery-plan.md).
+
 ---
 
 ## Start here
@@ -75,10 +107,10 @@ approve the plan; paste each skill when it is dispatched. Paste only the
 | Command | Effect |
 | --- | --- |
 | `/siplab-init` | Load orchestrator, boot payload, and catalogue in one step. |
-| `/siplab-catalogue [path]` | Register the default or a group catalogue. |
-| `/siplab-skill <N> [catalogue]` | Print skill `#N`'s body verbatim for dispatch. |
+| `/siplab-catalogue` | Re-register the catalogue, e.g. after a status change. |
+| `/siplab-skill <N>` | Print skill `#N`'s body verbatim for dispatch. |
 | `/siplab-test <scenario or corpus test>` | Build the test message (never includes a truth file). |
-| `/siplab-governance <SKILL.md> [catalogue]` | Review a skill before submission: linter, then the skill reviewer. |
+| `/siplab-governance <SKILL.md>` | Review a skill before submission: linter, then the skill reviewer. |
 
 `siplab-init`, `siplab-catalogue`, and `siplab-governance` are also auto-discovered skills under
 [`.claude/skills/`](.claude/skills/).
@@ -117,10 +149,11 @@ siplab/                                   # Canonical source of truth (vendor-ne
 │   ├── extract-evidence.md              # TShark recipes
 │   ├── validate_evidence.py             # Deterministic evidence validator
 │   └── lint_skill.py                    # Deterministic skill linter
-├── docs/
-│   ├── project-proposal/                # Proposal, delivery plan, test worksheet, glossary
-│   └── guides/                          # Teaching aids on synthetic data
-└── groups/                              # One workspace per student group; _template/ to copy
+└── docs/
+    ├── project-proposal/                # Proposal, delivery plan, test worksheet, glossary
+    └── guides/                          # Teaching aids on synthetic data
+
+deliverables/                            # Empty templates — each group fills them in its own copy
 
 .claude/commands/, .claude/skills/       # Claude Code wrappers
 .github/                                 # Copilot wrappers and workspace instructions
@@ -152,7 +185,7 @@ report with gaps can never be `pass`.
 
 Two advisory tiers, neither of which grades:
 
-1. **Deterministic** — `python3 siplab/tools/lint_skill.py <SKILL.md> [--catalogue <catalogue.md>]`
+1. **Deterministic** — `python3 siplab/tools/lint_skill.py <SKILL.md>`
    checks frontmatter, sections, status, scope redirects, output keys, the
    verdict table, stricter-mode elements, portability, and catalogue alignment.
 2. **Judgment** — the skill reviewer

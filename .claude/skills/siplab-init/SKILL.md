@@ -15,8 +15,7 @@ Process, **in order**:
    `SIP Test Engineer orchestrator loaded — waiting for boot.`
 2. Read `siplab/boot/boot.md`, load it, and reply
    `SIPLab boot loaded — waiting for catalogue.`
-3. Read `siplab/boot/catalogue.md` (or the group catalogue the user names),
-   register it, and reply
+3. Read `siplab/boot/catalogue.md`, register it, and reply
    `Catalogue registered, N skills available — ready for test case.`
 
 Do **not** act on any test yet; wait for a test message.

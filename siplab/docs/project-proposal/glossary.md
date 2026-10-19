@@ -23,6 +23,7 @@ by topic; within each group entries are alphabetical.
 | **Corpus (group)** | The group's labeled tests — test case, truth file, sanitized capture, evidence table — built in P2. |
 | **Corpus (held-out)** | The instructor's labeled cases with hidden labels, used for the final evaluation; not in the repository. |
 | **Coverage** | `complete` when every planned skill returned a usable finding and every focus tag had a skill; otherwise `partial`. Reported separately from the verdict (PROMPTARCH APR-024). |
+| **Deliverables folder** | The top-level `deliverables/` folder of a team repository: PBX extracts, corpus, specifications, test runs, worksheet, and report. |
 | **Evidence table** | The tab-separated file produced from a capture by the TShark recipe: one row per SIP message, keyed by frame number. The only packet data the AI sees. |
 | **Evidence validator** | `tools/validate_evidence.py`: the instructor's deterministic checker for schemas, citations, the verdict rule, and (optionally) the ground truth. |
 | **Failure stage** | The enumerated point at which observed behavior departs from the expected behavior (`registration`, `authentication`, `routing`, `call_setup`, `media_negotiation`, `media_path`, `teardown`, `messaging`, `transport`, `unknown`, or `none`). |
@@ -34,6 +35,7 @@ by topic; within each group entries are alphabetical.
 | **Governance (two tiers)** | The pre-submission review of a skill: tier 1, the deterministic skill linter; tier 2, the advisory skill reviewer. Neither grades. |
 | **Ground truth** | The verdict and failure stage a test is known to have, recorded in its truth file. |
 | **Insufficient evidence** | The verdict returned when the evidence cannot decide the question; a correct answer, not an error. |
+| **Milestone tag** | A git tag (`ms01`–`ms03`, or `cp1`, `cp2`, `final`) on the group's repository that marks a submission; the tagged commit is what is graded. |
 | **Operator** | The human (group member, instructor, or grader) driving the chat session. |
 | **Orchestrator** | The ASPECT-A agent that plans, waits for approval, dispatches skills, and consolidates findings; it never analyzes the evidence itself. |
 | **Placeholder skill** | A skill file shipped in ASPECT-S form with scope, inputs, and checks pre-filled, which returns a fixed placeholder finding until a group implements it. |
@@ -45,6 +47,7 @@ by topic; within each group entries are alphabetical.
 | **Skill linter** | `tools/lint_skill.py`: deterministic checks L1–L9 of a skill's frontmatter, sections, status, scope redirects, output keys, verdict table, stricter-mode elements, portability, and catalogue alignment. |
 | **Skill reviewer** | `agents/skill-reviewer.agent.md`: the ASPECT-A governance agent that reviews a candidate skill against checks R1–R13 and proposes fixes; advisory only. |
 | **SIPLab** | This project: build and test a SIP PBX with an AI Test Engineer. |
+| **Team repository** | A group's private copy of `edu-siplab`, created at kickoff (proposal § 3.8). The group works and submits only there; the instructor has read access. |
 | **Test case** | The AI input describing one test: objective, focus tags, endpoints, preconditions, steps, expected observations, observed outcome (`test-case.schema.json`). |
 | **Test message** | The operator message: the line `TEST CASE`, the test case, the line `EVIDENCE TABLE`, the table. |
 | **Truth file** | `<test-id>.truth.yaml`: the ground truth of a test (`truth.schema.json`). Never pasted into the chat. |
@@ -109,7 +112,7 @@ by topic; within each group entries are alphabetical.
 | **Linphone / Blink** | Open-source SIP clients. |
 | **pcap / pcapng** | Packet capture file formats. |
 | **PJSIP logger** | Asterisk's SIP message log (`pjsip set logger on`); an accepted secondary input for skills that declare it. |
-| **PR** | Pull request — the unit of submission per milestone or checkpoint. |
 | **TShark** | The command-line version of Wireshark, used for deterministic extraction. |
 | **TSV** | Tab-separated values — the format of the evidence table. |
+| **Upstream** | The git remote name for the instructor's `edu-siplab` repository in a team repository; instructor updates arrive with `git pull upstream main`. |
 | **Wireshark** | Packet capture and protocol analysis tool; its *Telephony → SIP Flows / VoIP Calls* views are the non-AI baseline in the evaluation. |

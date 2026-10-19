@@ -1,9 +1,8 @@
 ---
 mode: ask
-description: Register a SIPLab skill catalogue (default or a group's catalogue.md)
+description: Re-register the SIPLab skill catalogue in a running session
 ---
 
-Register a skill catalogue with the running SIPLab orchestrator. Ask for a
-group catalogue path if the operator wants one; otherwise use
-[`siplab/boot/catalogue.md`](../../siplab/boot/catalogue.md). Use only the body
-below the frontmatter and follow it exactly, including its readiness reply.
+Register the skill catalogue with the running SIPLab orchestrator: read
+[`siplab/boot/catalogue.md`](../../siplab/boot/catalogue.md), use only the body
+below its frontmatter, and follow it exactly, including its readiness reply.

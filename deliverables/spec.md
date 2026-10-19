@@ -1,4 +1,4 @@
-# Skill specifications — group <GG>
+# Skill specifications — <group name>
 
 One section per skill the group authors (≤ 1 page each).
 
