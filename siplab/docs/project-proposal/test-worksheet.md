@@ -31,6 +31,13 @@ its skills, and give graders an identical checklist to score against.
   `python3 siplab/tools/validate_evidence.py --evidence <table> --report <report.json> --truth <truth.yaml>`.
 - **Only authored skills are graded.** Placeholder skills appear in reports
   as coverage gaps; they are not filled in Parts B, C, and F.
+- **Self-check your skills before submitting.** Run the linter
+  (`python3 siplab/tools/lint_skill.py <SKILL.md> --catalogue <your catalogue.md>`)
+  and the advisory skill reviewer
+  ([`agents/skill-reviewer.agent.md`](../../agents/skill-reviewer.agent.md),
+  `/siplab-governance` in Claude Code) to catch structure, scope, and contract
+  problems early. They complement these checks — they do not replace them,
+  and they do not grade.
 - **Bring it to the defense.** The completed worksheet is the entry ticket
   for the demonstration and defense.
 

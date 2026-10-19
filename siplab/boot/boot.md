@@ -22,7 +22,7 @@ metadata:
 # SIPLab — Boot Payload
 
 > **Paste this body second**, after the orchestrator specification
-> (`orchestrator/sip-test-engineer.agent.md`) and before the catalogue.
+> (`agents/sip-test-engineer.agent.md`) and before the catalogue.
 > Do not edit it. It defines the contracts that the orchestrator and every
 > protocol skill in this session apply.
 

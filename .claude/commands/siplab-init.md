@@ -16,7 +16,7 @@ Do not act on any test yet. After the three replies, wait for a test message
 
 --- ORCHESTRATOR ---
 
-@siplab/orchestrator/sip-test-engineer.agent.md
+@siplab/agents/sip-test-engineer.agent.md
 
 --- BOOT PAYLOAD ---
 

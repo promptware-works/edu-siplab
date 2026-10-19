@@ -297,7 +297,7 @@ declares it.
 ### 3.3 Orchestrator behaviour — Plan & Approve
 
 The orchestrator is provided **complete** by the instructor
-([`orchestrator/sip-test-engineer.agent.md`](../../orchestrator/sip-test-engineer.agent.md)).
+([`agents/sip-test-engineer.agent.md`](../../agents/sip-test-engineer.agent.md)).
 It routes and consolidates; it **never analyzes the evidence itself** and
 never fills in for a missing or placeholder skill.
 
@@ -344,7 +344,8 @@ reject it. Conflicting findings are listed, never resolved silently.
 
 Every skill prompt must:
 
-- Be specified in **ASPECT-S** (§ 4).
+- Be specified in **ASPECT-S** (§ 4), including SIPLab's **Scope** section
+  (`When to Use` / `When NOT to Use`).
 - Accept the test case and evidence table of the operator's test message.
 - Return one finding with the same **10 top-level keys** across all skills,
   validating against `schema/finding.schema.json`:
@@ -409,8 +410,9 @@ text below the closing `---` of the frontmatter — is pasted into the chat.
 
 ```text
 siplab/
-├── orchestrator/
-│   └── sip-test-engineer.agent.md    # The orchestrator, complete (ASPECT-A) — pasted first
+├── agents/                           # ASPECT-A agents
+│   ├── sip-test-engineer.agent.md    # The orchestrator, complete — pasted first in a test session
+│   └── skill-reviewer.agent.md       # Governance agent — advisory review of a skill (§ 4.1)
 ├── boot/
 │   ├── boot.md                       # Pasted second — message format, contracts, vocabulary, policies P1–P4
 │   └── catalogue.md                  # Pasted third — skill registry the orchestrator reads
@@ -432,7 +434,8 @@ siplab/
 │   └── skill-inputs/<NN>-…/          # Inputs for the per-skill pass checks
 ├── tools/
 │   ├── extract-evidence.md           # TShark recipes (reference + extended field sets)
-│   └── validate_evidence.py          # Deterministic evidence validator
+│   ├── validate_evidence.py          # Deterministic evidence validator
+│   └── lint_skill.py                 # Deterministic skill linter (§ 4.1)
 ├── docs/
 │   ├── project-proposal/             # proposal, delivery plan, test worksheet, glossary
 │   └── guides/reading-a-finding.md   # Annotated finding on synthetic data
@@ -466,7 +469,7 @@ groups/<GG>-<group-name>/
 
 1. Open the repository in the IDE (VS Code for Copilot, or Claude Code).
 2. Start a fresh chat session.
-3. Paste the body of `orchestrator/sip-test-engineer.agent.md`, then of
+3. Paste the body of `agents/sip-test-engineer.agent.md`, then of
    `boot/boot.md`, then of the group's `catalogue.md`. After each, the
    assistant gives its readiness reply (§ 3.7).
 4. Paste a test message.
@@ -487,8 +490,10 @@ This paste-driven flow uses only **chat as runtime** — no MCP, no
 | Claude Code | `/siplab-catalogue [path]` | Registers the default or a group catalogue |
 | Claude Code | `/siplab-skill <N> [catalogue]` | Prints a skill body verbatim for dispatch |
 | Claude Code | `/siplab-test <scenario or corpus test>` | Builds the test message — never includes a truth file |
-| Copilot Chat | `.github/prompts/siplab-*.prompt.md` | The same four helpers as prompt files |
+| Claude Code | `/siplab-governance <SKILL.md> [catalogue]` (also a skill) | Runs the linter, then the skill reviewer (§ 4.1) |
+| Copilot Chat | `.github/prompts/siplab-*.prompt.md` | The same five helpers as prompt files |
 | Copilot Chat | `.github/agents/siplab-orchestrator.agent.md`, `.github/chatmodes/…` | Starts a chat as the orchestrator |
+| Copilot Chat | `.github/agents/siplab-governance.agent.md` | Starts a chat as the skill reviewer |
 | Copilot Chat | `.github/copilot-instructions.md` | Workspace rules |
 
 Wrappers only load the canonical files under `siplab/`. A wrapper that
@@ -532,17 +537,18 @@ ASPECT has two variants, because agents and skills have different concerns.
 The **frontmatter** carries the machine-readable metadata (APR-014 DECLARE);
 the **body** carries the behavior and is the only part pasted into the chat.
 
-**ASPECT-A — the orchestrator** (provided complete by the instructor):
+**ASPECT-A — the two agents** in `agents/`, the orchestrator and the skill
+reviewer (both provided complete by the instructor):
 
 | Section | What it specifies |
 | --- | --- |
 | `Role & Access Level` | Role, access, and the one-sentence mission. |
-| `Session Bootstrap` | What must be loaded before any test (boot payload, catalogue); HALT on failure. |
+| `Session Bootstrap` | What must be loaded first (boot payload, catalogue); HALT on failure. |
 | `Invocation Contract` | Who invokes it, with what signal, carrying what; when it rejects. |
 | `Scope` — `When NOT to Use` / `When to Use` | Negative and positive routing. |
 | `Tools & Capabilities` | Chat text only, and why nothing else is granted. |
-| `Routing & Method` | Routing table (focus tag → skill) and the PLAN / DISPATCH / REPORT method. |
-| `Handoff Contract` | The report JSON (artifact) and the handoff report format. |
+| `Routing & Method` | Orchestrator: routing table (focus tag → skill) and PLAN / DISPATCH / REPORT. Reviewer: checklist R1–R13. |
+| `Handoff Contract` | Orchestrator: report JSON. Reviewer: conformance table. Both: a handoff report. |
 | `Guardrails` | One-line, active-voice rules. |
 
 **ASPECT-S — every protocol skill** (in the stricter mode for
@@ -551,11 +557,21 @@ security-sensitive components, because skills read untrusted packet content):
 | Section | What it specifies |
 | --- | --- |
 | `Purpose`, `Consumed by`, `Produces` | The single SIP procedure judged; caller; output. |
+| `Scope` — `When to Use` / `When NOT to Use` | **SIPLab extension.** Positive scope, and the neighbouring cases each redirected `→ #N` to the skill that owns them. |
 | `Pre-Invocation Checklist` | What must be present before any output (boot Blocks 2 and 5, test case, required columns); HALT with a structured error otherwise. |
 | `Inputs (schema)` | One row per input, required or optional, with the UNTRUSTED marker. |
 | `Procedure` | Numbered steps ending in a first-match **verdict table**. |
 | `Output Contract` | The shared 10-key finding plus the skill's extra keys. |
 | `Quality Gates` + `Shared Rules` | Acceptance thresholds (table) and immutable rules. |
+
+**Why skills get a Scope section.** APR-001 leaves `When NOT to Use` out of
+ASPECT-S because a skill's input schema normally rejects inputs that are not
+its business. In SIPLab every skill receives the same test message, so the
+schema cannot keep a skill inside its procedure — without explicit boundaries,
+the registration skill could just as well judge INVITE challenges, and two
+skills would report on the same frames. SIPLab therefore adds the ASPECT-A
+`Scope` section to every skill, with each negative case pointing to the skill
+that owns it.
 
 A blank skeleton lives at
 [`skills/_template/SKILL.md`](../../skills/_template/SKILL.md). Every
@@ -565,6 +581,24 @@ copy it into `groups/<GG>-<group-name>/skills/<NN>-<short-name>/SKILL.md`,
 delete its *Placeholder Reply* section, and complete every TODO. The single
 complete worked example is
 [`skills/01-registration/SKILL.md`](../../skills/01-registration/SKILL.md).
+
+### 4.1 Governance — review before submission
+
+Two tiers check a skill before a group submits it (PROMPTARCH APR-010).
+Both are advisory: they complement the test worksheet and never replace it
+or grade.
+
+| Tier | Tool | Checks |
+| --- | --- | --- |
+| 1 — deterministic | `python3 siplab/tools/lint_skill.py <SKILL.md> [--catalogue <catalogue.md>]` | L1 frontmatter · L2 sections and order · L3 status consistency (no placeholder, TODO, or authoring notes once implemented) · L4 scope redirects · L5 output keys · L6 verdict table · L7 stricter-mode elements · L8 portability · L9 catalogue alignment |
+| 2 — judgment | [`agents/skill-reviewer.agent.md`](../../agents/skill-reviewer.agent.md), in its own chat session | R1–R13: single procedure, scope boundaries, checklist, inputs, deterministic procedure, verdict table, output contract, untrusted input, coverage honesty, quality gates, portability, references |
+
+The reviewer is started like the orchestrator (reviewer → boot → catalogue)
+and receives `SKILL UNDER REVIEW`, the skill body, and optionally
+`LINT REPORT` with the linter's output; `/siplab-governance` does all of
+this in Claude Code. It returns a conformance table with a fix for each
+failed check. It never runs the skill, never rewrites it, and never sees a
+truth file. Run it in a separate chat, never inside a test session.
 
 ---
 
@@ -681,7 +715,7 @@ are in [`test-worksheet.md`](./test-worksheet.md).
 
 > **Orchestrator note.** The orchestrator is provided complete by the
 > instructor, in ASPECT-A, at
-> [`orchestrator/sip-test-engineer.agent.md`](../../orchestrator/sip-test-engineer.agent.md).
+> [`agents/sip-test-engineer.agent.md`](../../agents/sip-test-engineer.agent.md).
 > Skills #2–#10 ship as runnable placeholders: each returns a fixed
 > placeholder finding, so the whole pipeline runs from day one and every
 > unimplemented skill shows up as a coverage gap. Groups register their skills
@@ -719,6 +753,7 @@ are in [`test-worksheet.md`](./test-worksheet.md).
 | Personal data or credentials leak into prompts or the repository | Isolated lab and test accounts; recipe excludes credential fields; sanitization check C6. |
 | Uneven contribution inside a group | Contribution statement; individual questioning in the defense. |
 | The orchestrator analyzes the evidence itself and hides a missing or placeholder skill | Orchestrator guardrail: never analyze or fill in for a skill; placeholders are gaps; the report schema and the validator reject a `pass` with gaps (G3). |
+| A skill judges procedures outside its scope and contradicts another skill | `Scope` section with redirects in every skill; linter check L4; reviewer checks R2–R3; conflicts listed in the REPORT. |
 | Small corpus gives misleading accuracy | Minimum corpus sizes per variant; held-out instructor corpus; report case counts. |
 
 ---

@@ -10,18 +10,23 @@ precise, versioned, reviewable.
 ## What lives where
 
 - **Canonical source of truth: `siplab/`.**
-  - `siplab/orchestrator/sip-test-engineer.agent.md` — the orchestrator, fully
-    implemented, specified in **ASPECT-A** (PROMPTARCH APR-001).
+  - `siplab/agents/` — the two **ASPECT-A** agents (PROMPTARCH APR-001):
+    `sip-test-engineer.agent.md`, the orchestrator, fully implemented; and
+    `skill-reviewer.agent.md`, the advisory governance agent that reviews a
+    candidate skill before submission.
   - `siplab/boot/boot.md` — the boot payload: operator message format, finding
     contract, report contract and verdict rule, operator vocabulary, policies P1–P4.
   - `siplab/boot/catalogue.md` — the ten-skill registry.
   - `siplab/skills/<NN>-<name>/SKILL.md` — protocol skills in **ASPECT-S**.
     `01-registration` is the complete worked example; `02`–`10` are runnable
-    placeholders for students; `_template` is the blank skeleton.
+    placeholders for students; `_template` is the blank skeleton. Every skill
+    has a `Scope` section (`When to Use` / `When NOT to Use`, redirects `→ #N`) —
+    a deliberate SIPLab extension to ASPECT-S.
   - `siplab/schema/` — `finding`, `report`, `test-case`, and `truth` JSON Schemas.
   - `siplab/scenarios/` — reference tests (test case, evidence table, truth,
     reference outputs) and per-skill inputs.
-  - `siplab/tools/` — TShark extraction recipes and the evidence validator.
+  - `siplab/tools/` — TShark extraction recipes, the evidence validator, and
+    the skill linter (governance tier 1).
   - `siplab/docs/project-proposal/` — proposal, delivery plan, test worksheet, glossary.
   - `siplab/docs/guides/` — teaching aids on synthetic data.
   - `siplab/groups/` — one workspace per student group; `_template/` to copy.
@@ -48,8 +53,10 @@ Chat is the runtime: no MCP, shell, or file changes during a run.
 - `/siplab-catalogue [path]` — register the default or a group catalogue.
 - `/siplab-skill <N> [catalogue]` — print a skill body verbatim for dispatch.
 - `/siplab-test <scenario folder | corpus path + test-id>` — build the test message.
+- `/siplab-governance <SKILL.md> [catalogue]` — lint a skill, then run the
+  skill reviewer on it (advisory; never grades).
 
-`siplab-init` and `siplab-catalogue` also exist as auto-discovered skills under
+`siplab-init`, `siplab-catalogue`, and `siplab-governance` also exist as auto-discovered skills under
 `.claude/skills/`. Copilot equivalents live under `.github/`.
 
 Do **not** adopt the orchestrator role on every message. Adopt it only when the
@@ -84,10 +91,12 @@ pull request.
 - **No secrets, no personal data.** Lab addresses and extensions only; the
   TShark recipe never extracts digest nonces or responses.
 - **Two-digit, zero-padded skill folders** (`01-…`, `10-…`).
+- **Agent file name = frontmatter `name`** (`sip-test-engineer`, `skill-reviewer`).
 
-After changing scenarios, schemas, or the validator, re-run:
+After changing skills, scenarios, schemas, or the tools, re-run:
 
 ```bash
+python3 siplab/tools/lint_skill.py siplab/skills/[0-9]*/SKILL.md
 for d in siplab/scenarios/0*/; do
   python3 siplab/tools/validate_evidence.py --evidence "${d}evidence.tsv" \
     --report "${d}reference/report-skeleton.json" --truth "${d}truth.yaml"

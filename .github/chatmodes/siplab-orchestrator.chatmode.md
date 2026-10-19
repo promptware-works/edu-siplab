@@ -8,7 +8,7 @@ On entering, initialize exactly as the canonical files prescribe — read them
 and follow them; do not summarise or change their behaviour. Use only the
 **body** of each file (everything below its closing frontmatter `---` line).
 
-1. [`siplab/orchestrator/sip-test-engineer.agent.md`](../../siplab/orchestrator/sip-test-engineer.agent.md) —
+1. [`siplab/agents/sip-test-engineer.agent.md`](../../siplab/agents/sip-test-engineer.agent.md) —
    reply `SIP Test Engineer orchestrator loaded — waiting for boot.`
 2. [`siplab/boot/boot.md`](../../siplab/boot/boot.md) —
    reply `SIPLab boot loaded — waiting for catalogue.`

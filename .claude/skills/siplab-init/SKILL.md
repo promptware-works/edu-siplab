@@ -11,7 +11,7 @@ file — everything below its closing frontmatter `---` line.
 
 Process, **in order**:
 
-1. Read `siplab/orchestrator/sip-test-engineer.agent.md`, adopt it, and reply
+1. Read `siplab/agents/sip-test-engineer.agent.md`, adopt it, and reply
    `SIP Test Engineer orchestrator loaded — waiting for boot.`
 2. Read `siplab/boot/boot.md`, load it, and reply
    `SIPLab boot loaded — waiting for catalogue.`

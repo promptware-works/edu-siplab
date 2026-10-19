@@ -31,6 +31,7 @@ by topic; within each group entries are alphabetical.
 | **Frontmatter** | The YAML block at the top of a prompt file holding its machine-readable metadata (PROMPTARCH APR-014 DECLARE). Never pasted into the chat. |
 | **Gap** | A recorded fact that a planned skill did not contribute (placeholder, not pasted, invalid reply, no skill for a focus tag), with the action that would close it. |
 | **Gate** | A worksheet check that must pass before the next phase starts. |
+| **Governance (two tiers)** | The pre-submission review of a skill: tier 1, the deterministic skill linter; tier 2, the advisory skill reviewer. Neither grades. |
 | **Ground truth** | The verdict and failure stage a test is known to have, recorded in its truth file. |
 | **Insufficient evidence** | The verdict returned when the evidence cannot decide the question; a correct answer, not an error. |
 | **Operator** | The human (group member, instructor, or grader) driving the chat session. |
@@ -39,7 +40,10 @@ by topic; within each group entries are alphabetical.
 | **Plan-and-Approve** | The orchestration protocol: the orchestrator proposes a plan, waits for operator approval, and only then dispatches skills. |
 | **PROMPTARCH** | Promptware Works' collection of Architectural Principle Records for promptware. |
 | **Protocol skill** | A single prompt-defined specialist, specified in ASPECT-S, that judges one SIP procedure from the evidence table. |
+| **Scope (skill)** | The `When to Use` / `When NOT to Use` section of a SIPLab skill — a SIPLab extension to ASPECT-S. Each negative case redirects `→ #N` to the skill that owns it. |
 | **Self-check** | The step where a component re-reads its output against its Quality Gates and rules (skills) or Guardrails (orchestrator) before replying. |
+| **Skill linter** | `tools/lint_skill.py`: deterministic checks L1–L9 of a skill's frontmatter, sections, status, scope redirects, output keys, verdict table, stricter-mode elements, portability, and catalogue alignment. |
+| **Skill reviewer** | `agents/skill-reviewer.agent.md`: the ASPECT-A governance agent that reviews a candidate skill against checks R1–R13 and proposes fixes; advisory only. |
 | **SIPLab** | This project: build and test a SIP PBX with an AI Test Engineer. |
 | **Test case** | The AI input describing one test: objective, focus tags, endpoints, preconditions, steps, expected observations, observed outcome (`test-case.schema.json`). |
 | **Test message** | The operator message: the line `TEST CASE`, the test case, the line `EVIDENCE TABLE`, the table. |

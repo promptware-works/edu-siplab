@@ -169,6 +169,9 @@ without the AI SIP Test Engineer.
   across environments, injection-resistant, and return
   `insufficient_evidence` where the capture cannot decide; add a
   self-check step.
+- Before submitting, review every group skill in two tiers (proposal § 4.1):
+  `lint_skill.py` must report no errors, and the skill reviewer's fixes are
+  either applied or answered in `spec.md`.
 - Run the instructor's held-out corpus (labels revealed after submission).
 - Write the evaluation (proposal § 6.1) and the final `report.md`.
 - Demonstrate the PBX first, then the AI SIP Test Engineer, and defend the
@@ -247,6 +250,8 @@ arrive with their topology and devices ready.
 
 - Integrate and harden the skills; paired transcripts and validator runs
   for every case; held-out corpus run.
+- Review every group skill with the linter and the skill reviewer before
+  submission (proposal § 4.1).
 - Write `report.md` and prepare the demonstration.
 
 #### Final deliverables (end of Week 3)

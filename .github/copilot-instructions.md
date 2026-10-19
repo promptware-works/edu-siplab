@@ -10,7 +10,7 @@ validator (`siplab/tools/validate_evidence.py`).
 Everything lives under `siplab/`. The authoritative runtime files — **read them
 and follow them exactly; never summarise or change their behaviour**:
 
-- `siplab/orchestrator/sip-test-engineer.agent.md` — the orchestrator (ASPECT-A).
+- `siplab/agents/sip-test-engineer.agent.md` — the orchestrator (ASPECT-A).
 - `siplab/boot/boot.md` — message format, finding and report contracts, vocabulary, policies P1–P4.
 - `siplab/boot/catalogue.md` — the ten dispatchable skills.
 - `siplab/skills/<NN>-<name>/SKILL.md` — protocol skills (ASPECT-S); `01-registration` is the worked example, the others are placeholders.

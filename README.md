@@ -51,7 +51,7 @@ approve the plan; paste each skill when it is dispatched. Paste only the
 ### Manual start (works everywhere — the canonical flow)
 
 1. Open this repository in your IDE and start a fresh chat session.
-2. Paste the body of [`siplab/orchestrator/sip-test-engineer.agent.md`](siplab/orchestrator/sip-test-engineer.agent.md).
+2. Paste the body of [`siplab/agents/sip-test-engineer.agent.md`](siplab/agents/sip-test-engineer.agent.md).
    Reply: `SIP Test Engineer orchestrator loaded — waiting for boot.`
 3. Paste the body of [`siplab/boot/boot.md`](siplab/boot/boot.md).
    Reply: `SIPLab boot loaded — waiting for catalogue.`
@@ -78,17 +78,19 @@ approve the plan; paste each skill when it is dispatched. Paste only the
 | `/siplab-catalogue [path]` | Register the default or a group catalogue. |
 | `/siplab-skill <N> [catalogue]` | Print skill `#N`'s body verbatim for dispatch. |
 | `/siplab-test <scenario or corpus test>` | Build the test message (never includes a truth file). |
+| `/siplab-governance <SKILL.md> [catalogue]` | Review a skill before submission: linter, then the skill reviewer. |
 
-`siplab-init` and `siplab-catalogue` are also auto-discovered skills under
+`siplab-init`, `siplab-catalogue`, and `siplab-governance` are also auto-discovered skills under
 [`.claude/skills/`](.claude/skills/).
 
 ### GitHub Copilot Chat (convenience wrappers)
 
 - [`.github/copilot-instructions.md`](.github/copilot-instructions.md) — workspace rules.
 - [`.github/prompts/`](.github/prompts/) — `siplab-init`, `siplab-catalogue`,
-  `siplab-skill`, `siplab-test` prompt files (enable `chat.promptFiles` in VS Code).
+  `siplab-skill`, `siplab-test`, `siplab-governance` prompt files (enable `chat.promptFiles` in VS Code).
 - [`.github/agents/siplab-orchestrator.agent.md`](.github/agents/siplab-orchestrator.agent.md)
-  and a chat mode under [`.github/chatmodes/`](.github/chatmodes/).
+  and a chat mode under [`.github/chatmodes/`](.github/chatmodes/);
+  [`.github/agents/siplab-governance.agent.md`](.github/agents/siplab-governance.agent.md) for the skill reviewer.
 
 > Wrappers are convenience, not requirements. If a wrapper ever disagrees with
 > the file it loads, the file under `siplab/` wins.
@@ -99,7 +101,9 @@ approve the plan; paste each skill when it is dispatched. Paste only the
 
 ```text
 siplab/                                   # Canonical source of truth (vendor-neutral)
-├── orchestrator/sip-test-engineer.agent.md   # The orchestrator — complete (ASPECT-A)
+├── agents/                              # ASPECT-A agents
+│   ├── sip-test-engineer.agent.md       # The orchestrator — complete
+│   └── skill-reviewer.agent.md          # Governance agent — advisory skill review
 ├── boot/
 │   ├── boot.md                          # Message format, contracts, vocabulary, policies P1–P4
 │   └── catalogue.md                     # The ten-skill registry
@@ -111,7 +115,8 @@ siplab/                                   # Canonical source of truth (vendor-ne
 ├── scenarios/                           # Reference tests + per-skill inputs, with reference outputs
 ├── tools/
 │   ├── extract-evidence.md              # TShark recipes
-│   └── validate_evidence.py             # Deterministic evidence validator
+│   ├── validate_evidence.py             # Deterministic evidence validator
+│   └── lint_skill.py                    # Deterministic skill linter
 ├── docs/
 │   ├── project-proposal/                # Proposal, delivery plan, test worksheet, glossary
 │   └── guides/                          # Teaching aids on synthetic data
@@ -127,10 +132,13 @@ siplab/                                   # Canonical source of truth (vendor-ne
 
 The orchestrator and the skills follow **ASPECT** from
 [PROMPTARCH APR-001](https://github.com/promptware-works/promptarch/blob/main/principles/APR-001-aspect.md):
-**ASPECT-A** for the orchestrator (role and access, session bootstrap,
+**ASPECT-A** for the two agents (role and access, session bootstrap,
 invocation contract, scope, tools, routing and method, handoff contract,
-guardrails) and **ASPECT-S** for skills (purpose, pre-invocation checklist,
-inputs, procedure, output contract, quality gates and shared rules).
+guardrails) and **ASPECT-S** for skills (purpose, scope, pre-invocation
+checklist, inputs, procedure, output contract, quality gates and shared
+rules). The skills' **Scope** section (`When to Use` / `When NOT to Use`) is a
+SIPLab extension: all skills receive the same input, so explicit boundaries
+keep each skill inside its procedure.
 Metadata lives in each file's frontmatter (APR-014 DECLARE); the body is the
 behavior.
 
@@ -139,6 +147,18 @@ Every skill returns the shared 10-key finding: `skill`, `test_id`, `summary`,
 `rationale`. The orchestrator's report keeps **coverage** separate from the
 verdict (APR-024): a placeholder or missing skill is a recorded gap, and a
 report with gaps can never be `pass`.
+
+### Governance — review a skill before submission
+
+Two advisory tiers, neither of which grades:
+
+1. **Deterministic** — `python3 siplab/tools/lint_skill.py <SKILL.md> [--catalogue <catalogue.md>]`
+   checks frontmatter, sections, status, scope redirects, output keys, the
+   verdict table, stricter-mode elements, portability, and catalogue alignment.
+2. **Judgment** — the skill reviewer
+   ([`siplab/agents/skill-reviewer.agent.md`](siplab/agents/skill-reviewer.agent.md)),
+   in its own chat: reviewer → boot → catalogue, then `SKILL UNDER REVIEW` + the
+   skill body + optionally `LINT REPORT`. It returns a conformance table with fixes.
 
 ---
 
